@@ -342,6 +342,73 @@ function showMode(){
     '別のブラウザで開いてみてください。';
 }
 
+const pad=n=>String(n).padStart(2,"0");
+const fmt=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const todayKey=()=>fmt(new Date());
+function shiftKey(k,n){const [y,m,d]=k.split("-").map(Number);
+  const dt=new Date(y,m-1,d);dt.setDate(dt.getDate()+n);return fmt(dt)}
+function diffDays(a,b){const [y1,m1,d1]=a.split("-").map(Number),[y2,m2,d2]=b.split("-").map(Number);
+  return Math.round((new Date(y2,m2-1,d2)-new Date(y1,m1-1,d1))/86400000)}
+const toMin=t=>{if(!t)return null;const [h,m]=t.split(":").map(Number);return h*60+m};
+
+function sleepOf(k){
+  const prev=data[shiftKey(k,-1)], cu=data[k];
+  if(!prev||!prev.bed||!cu||!cu.wake)return null;
+  let d=toMin(cu.wake)-toMin(prev.bed);
+  if(d<=0)d+=1440;
+  if(d>16*60)return null;
+  return d/60;
+}
+const startKey=()=>{const a=Object.keys(data).sort();return a.length?a[0]:todayKey()};
+
+function flowerSVG(n){
+  const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const g=cl(n,0,14);
+  const soil='<ellipse cx="60" cy="130" rx="34" ry="7" fill="#2A2F4D"/>';
+  if(g===0){
+    return '<svg width="130" height="150" viewBox="0 0 120 150" aria-label="種">'+soil+
+      '<ellipse cx="60" cy="126" rx="6" ry="4.5" fill="#8A6B4F"/></svg>';
+  }
+  const stemH=cl(10+g*4.6,10,74);
+  const topY=130-stemH;
+  const leafS=cl((g-2)/4,0,1);
+  const budR=g>=7?cl(4+(g-7)*1.1,0,11):0;
+  const ps=cl((g-10)/4,0,1);
+  const headY=topY-budR*0.6;
+  let s='<svg width="130" height="150" viewBox="0 0 120 150" aria-label="育っている花">'+soil;
+  s+='<path d="M60 130 Q'+(60+Math.sin(g)*3)+' '+((130+topY)/2)+' 60 '+topY+'" stroke="#7FA88A" stroke-width="3.4" fill="none" stroke-linecap="round"/>';
+  if(leafS>0){
+    const ly=130-stemH*0.45, lw=17*leafS, lh=7.5*leafS;
+    s+='<ellipse cx="'+(60-lw*0.8)+'" cy="'+ly+'" rx="'+lw+'" ry="'+lh+'" fill="#7FA88A" opacity=".85" transform="rotate(-18 '+(60-lw*0.8)+' '+ly+')"/>';
+    if(g>=5){const ly2=130-stemH*0.68;
+      s+='<ellipse cx="'+(60+lw*0.8)+'" cy="'+ly2+'" rx="'+lw+'" ry="'+lh+'" fill="#7FA88A" opacity=".7" transform="rotate(18 '+(60+lw*0.8)+' '+ly2+')"/>';}
+  }
+  if(budR>0){
+    if(ps>0){
+      s+='<g transform="translate(60,'+headY+')">';
+      for(let i=0;i<12;i++){
+        s+='<ellipse cx="0" cy="'+(-(budR+10*ps))+'" rx="'+(4.6*ps)+'" ry="'+(10.5*ps)+
+           '" fill="#E5B96A" opacity=".92" transform="rotate('+(i*30)+')"/>';
+      }
+      s+='</g><circle cx="60" cy="'+headY+'" r="'+budR+'" fill="#8A6B4F"/>'+
+         '<circle cx="60" cy="'+headY+'" r="'+(budR*0.55)+'" fill="#6B5238"/>';
+    }else{
+      s+='<ellipse cx="60" cy="'+headY+'" rx="'+(budR*0.85)+'" ry="'+(budR*1.15)+'" fill="#8FBF9B"/>'+
+         '<ellipse cx="'+(60-budR*0.3)+'" cy="'+headY+'" rx="'+(budR*0.3)+'" ry="'+(budR*0.95)+'" fill="#A8D4B2" opacity=".7"/>';
+    }
+  }
+  return s+'</svg>';
+}
+function growCaption(n){
+  if(n===0)return "種をまいたところ";
+  if(n<=2)return "芽が出ました";
+  if(n<=4)return "葉がひらいてきました";
+  if(n<=6)return "背がのびています";
+  if(n<=9)return "つぼみがふくらんでいます";
+  if(n<=13)return "ほころびはじめました";
+  return "満開です 🌻";
+}
+
 document.querySelectorAll(".steps").forEach(g=>{
   const k=g.dataset.key;
   LABELS.forEach((lab,i)=>{
