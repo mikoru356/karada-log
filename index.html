@@ -174,6 +174,40 @@ textarea:focus-visible{outline:2px solid var(--dusk);outline-offset:1px}
 .prow .pb i{display:block;height:100%;background:var(--tense);border-radius:99px}
 .prow .pn{color:var(--mute);text-align:right;font-variant-numeric:tabular-nums}
 
+
+
+.dtype{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.dtype button{font-family:inherit;font-size:13px;font-weight:700;color:var(--mute);
+  background:var(--ink-3);border:1px solid transparent;border-radius:10px;
+  padding:12px 4px;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.dtype button[aria-pressed=true]{background:rgba(144,150,200,.16);
+  border-color:rgba(144,150,200,.6);color:var(--paper)}
+.dtype button:focus-visible{outline:2px solid var(--paper);outline-offset:2px}
+.tasks{display:flex;flex-direction:column;gap:8px}
+.tasks button{font-family:inherit;font-size:14px;color:var(--mute);background:var(--ink-3);
+  border:1px solid transparent;border-radius:11px;padding:14px 15px;cursor:pointer;
+  display:flex;align-items:center;gap:11px;text-align:left;
+  transition:background .15s,color .15s,border-color .15s}
+.tasks button .bx{width:20px;height:20px;border-radius:6px;flex:none;
+  border:2px solid var(--mute);display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:800;color:var(--ink)}
+.tasks button[aria-pressed=true]{background:rgba(229,185,106,.13);
+  border-color:rgba(229,185,106,.55);color:var(--paper);font-weight:500}
+.tasks button[aria-pressed=true] .bx{background:var(--day);border-color:var(--day)}
+.tasks button:focus-visible{outline:2px solid var(--paper);outline-offset:2px}
+.tasks .sub{font-size:11px;color:var(--mute);display:block;font-weight:400}
+
+.week{background:linear-gradient(160deg,#2E2A1E 0%,#1D2138 75%);
+  border:1px solid rgba(229,185,106,.3)}
+.wk{display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:center}
+.wk>div{background:rgba(0,0,0,.18);border-radius:11px;padding:15px 8px}
+.wk .n{font-family:"Bricolage Grotesque",system-ui,sans-serif;
+  font-size:32px;font-weight:800;color:var(--day);line-height:1}
+.wk .u{font-size:12px;color:var(--mute);margin-left:3px}
+.wk .cap{display:block;font-size:11px;color:var(--mute);margin-top:9px;line-height:1.5}
+.wkmsg{font-size:12px;color:var(--mute);margin:14px 0 0;line-height:1.65}
+.wkmsg b{color:var(--day);font-weight:700}
+
 .bands{display:flex;flex-direction:column;gap:9px}
 .band{display:grid;grid-template-columns:36px 30px 1fr auto;gap:8px;align-items:center;
   background:none;border:none;padding:2px 0;cursor:pointer;text-align:left;font-family:inherit}
@@ -251,11 +285,15 @@ textarea:focus-visible{outline:2px solid var(--dusk);outline-offset:1px}
 </section>
 
 <section class="card evening">
-  <h2>夜｜1日を終えて</h2>
-  <div class="field">
-    <div class="flabel"><label for="work">この日の作業時間</label>
-      <span class="val day"><span id="workV">3.0</span><span class="unit">時間</span></span></div>
-    <input type="range" id="work" min="0" max="12" step="0.5" value="3">
+  <h2>夜｜1日をふりかえる</h2>
+  <div class="field" id="taskField">
+    <div class="flabel"><span id="taskLabel">この日は</span></div>
+    <div class="dtype" id="dtype" role="group" aria-label="勤務日か休みの日か">
+      <button type="button" data-t="work">勤務日</button>
+      <button type="button" data-t="off">休みの日</button>
+    </div>
+    <p class="hint" id="taskHint" style="margin:13px 0 9px">できたことにチェック</p>
+    <div class="tasks" id="tasks"></div>
   </div>
   <div class="field">
     <div class="flabel"><span>日中の体の重さ</span></div>
@@ -285,16 +323,22 @@ textarea:focus-visible{outline:2px solid var(--dusk);outline-offset:1px}
   <button class="save" id="save">この日を記録する</button>
 </section>
 
-<section class="card insight" id="insight" hidden>
-  <h2>見えてきたこと</h2>
-  <p class="lead" id="lead"></p>
-  <div class="cmp">
-    <div class="lo"><span class="n" id="loN">–</span><span class="cap">6時間未満で寝た日<br><span id="loD"></span>日</span></div>
-    <div class="vs">vs</div>
-    <div class="hi"><span class="n" id="hiN">–</span><span class="cap">6時間以上寝た日<br><span id="hiD"></span>日</span></div>
+<section class="card week" id="week">
+  <h2 style="color:var(--day)">今週の作業時間</h2>
+  <div class="wk">
+    <div><span class="n" id="wkMin">0</span><span class="u">分</span>
+      <span class="cap">平日<br>夜15分＋昼15分</span></div>
+    <div><span class="n" id="wkHr">0</span><span class="u">時間</span>
+      <span class="cap">休みの日<br>朝1時間</span></div>
   </div>
+  <p class="wkmsg" id="wkMsg"></p>
+</section>
+
+<section class="card insight" id="insight" hidden>
+  <h2>体のようす</h2>
+  <p class="lead" id="lead"></p>
   <div class="parts" id="partStats" hidden>
-    <h3>睡眠が短い日に出やすいところ</h3>
+    <h3>体が重い日に出やすいところ</h3>
     <div id="partRows"></div>
   </div>
 </section>
@@ -305,7 +349,7 @@ textarea:focus-visible{outline:2px solid var(--dusk);outline-offset:1px}
   <p class="empty" id="empty">まだ記録がありません。今夜ぶんから始めましょう。</p>
   <div class="legend">
     <span><i style="background:var(--night)"></i>睡眠</span>
-    <span><i style="background:var(--day)"></i>作業</span>
+    <span><i style="background:var(--day)"></i>確保できた作業</span>
     <span><i style="background:var(--tense);border-radius:50%"></i>体（朝・日中・夜）</span>
   </div>
 </section>
@@ -432,9 +476,44 @@ PARTS.forEach(p=>{
   partBox.appendChild(b);
 });
 
-const work=document.getElementById("work"),wake=document.getElementById("wake"),
+const wake=document.getElementById("wake"),
       bed=document.getElementById("bed"),pickDate=document.getElementById("pickDate");
-work.oninput=()=>document.getElementById("workV").textContent=(+work.value).toFixed(1);
+
+/* 火〜金=勤務日 / 土日月=休みの日 */
+const isWork=k=>{const [y,m,d]=k.split("-").map(Number);
+  const w=new Date(y,m-1,d).getDay();return w>=2&&w<=5};
+const TASKS={
+  work:[["noon","昼休憩に15分","スマホでAIと壁打ち"],
+        ["night","夜22時から15分","PCを開く"]],
+  off :[["morning","朝5:30〜6:30に作業","前夜23時就寝が前提"]]
+};
+let curTasks={}, curType="work";
+const dtypeBox=document.getElementById("dtype");
+[...dtypeBox.children].forEach(b=>{
+  b.onclick=()=>{curType=b.dataset.t;paintType();renderTaskList()};
+});
+function paintType(){
+  [...dtypeBox.children].forEach(b=>
+    b.setAttribute("aria-pressed",String(b.dataset.t===curType)));
+}
+function renderTaskList(){
+  const box=document.getElementById("tasks"), set=TASKS[curType];
+  box.innerHTML="";
+  set.forEach(([id,ttl,sub])=>{
+    const b=document.createElement("button");
+    b.type="button";
+    b.setAttribute("aria-pressed",String(!!curTasks[id]));
+    b.innerHTML='<span class="bx">✓</span><span>'+ttl+'<span class="sub">'+sub+'</span></span>';
+    b.onclick=()=>{curTasks[id]=!curTasks[id];
+      b.setAttribute("aria-pressed",String(!!curTasks[id]))};
+    box.appendChild(b);
+  });
+}
+function buildTasks(k){
+  const e=data[k];
+  curType = (e && e.dayType) ? e.dayType : (isWork(k)?"work":"off");
+  paintType();renderTaskList();
+}
 
 function setSteps(k,v){const g=document.querySelector('.steps[data-key="'+k+'"]');
   cur[k]=v;[...g.children].forEach((c,j)=>c.setAttribute("aria-pressed",String(j===v)))}
@@ -448,7 +527,8 @@ function showDur(){
     : '<span class="v">'+h.toFixed(1)+'</span><span class="unit">時間</span>';
 }
 function collect(){
-  return {wake:wake.value||"",bed:bed.value||"",work:+work.value,
+  return {wake:wake.value||"",bed:bed.value||"",dayType:curType,
+    noon:!!curTasks.noon,night:!!curTasks.night,morning:!!curTasks.morning,
     m:cur.m,a:cur.a,n:cur.n,parts:[...curParts],memo:document.getElementById("memo").value};
 }
 function persist(msg){
@@ -478,7 +558,8 @@ function loadDay(k){
   viewKey=k;
   const e=data[k]||{};
   wake.value=e.wake||"";bed.value=e.bed||"";
-  work.value=e.work!==undefined?e.work:3;work.oninput();
+  curTasks={noon:!!e.noon,night:!!e.night,morning:!!e.morning};
+  buildTasks(k);
   setSteps("m",e.m!==undefined?e.m:1);
   setSteps("a",e.a!==undefined?e.a:1);
   setSteps("n",e.n!==undefined?e.n:1);
@@ -544,7 +625,8 @@ function render(){
   keys.slice(0,21).forEach(k=>{
     const e=data[k],h=sleepOf(k),b=document.createElement("button");
     b.className="band";b.type="button";b.onclick=()=>loadDay(k);
-    const sw=((h||0)/22)*100, ww=((e.work||0)/22)*100;
+    const mins=(e.noon?15:0)+(e.night?15:0)+(e.morning?60:0);
+    const sw=((h||0)/22)*100, ww=(mins/60/22)*100*3;
     const dots=["m","a","n"].map(x=>'<i style="opacity:'+[.22,.45,.72,1][e[x]!==undefined?e[x]:1]+'"></i>').join("");
     b.innerHTML='<span class="d">'+k.slice(5).replace("-","/")+'</span>'+
       '<span class="h">'+(h!==null?h.toFixed(1):"–")+'</span>'+
@@ -553,31 +635,45 @@ function render(){
     box.appendChild(b);
   });
 
-  const scored=keys.filter(k=>sleepOf(k)!==null&&data[k].m!==undefined);
-  const loK=scored.filter(k=>sleepOf(k)<6), hiK=scored.filter(k=>sleepOf(k)>=6);
+  /* --- 今週の作業時間 --- */
+  const tk=todayKey(), dow=new Date(tk.split("-")[0],tk.split("-")[1]-1,tk.split("-")[2]).getDay();
+  const monOff=(dow+6)%7;
+  const wkStart=shiftKey(tk,-monOff);
+  let mins=0, hrs=0;
+  for(let i=0;i<7;i++){
+    const e=data[shiftKey(wkStart,i)];if(!e)continue;
+    if(e.noon)mins+=15;
+    if(e.night)mins+=15;
+    if(e.morning)hrs+=1;
+  }
+  document.getElementById("wkMin").textContent=mins;
+  document.getElementById("wkHr").textContent=hrs;
+  const wm=document.getElementById("wkMsg");
+  if(mins===0&&hrs===0)
+    wm.innerHTML='まだ今週の記録がありません。<b>夜22時の15分</b>から始めてみてください。';
+  else
+    wm.innerHTML='今週これまでで <b>'+(mins+hrs*60)+'分</b>。'+
+      '全部できなくて大丈夫です。できた日を数えるための表示です。';
+
+  /* --- 体のようす（重い日に出やすい部位） --- */
+  const rated=keys.filter(k=>data[k].m!==undefined&&(data[k].parts||[]).length);
   const ins=document.getElementById("insight");
-  if(loK.length&&hiK.length){
+  if(rated.length>=3){
     ins.hidden=false;
-    const L=avg(loK.map(k=>dayScore(data[k]))), H=avg(hiK.map(k=>dayScore(data[k])));
-    document.getElementById("loN").textContent=L.toFixed(1);
-    document.getElementById("hiN").textContent=H.toFixed(1);
-    document.getElementById("loD").textContent=loK.length;
-    document.getElementById("hiD").textContent=hiK.length;
-    const diff=L-H;
-    document.getElementById("lead").innerHTML= diff>=0.3
-      ? '睡眠が6時間を切った日は、体の重さが平均で <b>'+diff.toFixed(1)+'ポイント</b> 重くなっています。ほぐすより、寝る時間を確保するほうが効きそうです。'
-      : diff<=-0.3
-      ? 'いまのところ、睡眠が短い日のほうが体は軽く出ています。作業時間や姿勢など、別の要因を疑ってみる余地があります。'
-      : 'いまのところ、睡眠時間による差はほとんど出ていません。もう少し記録を重ねると傾向が見えてきます。';
+    const heavy=keys.filter(k=>dayScore(data[k])>=1.7);
+    const light=keys.filter(k=>data[k].m!==undefined&&dayScore(data[k])<1.7);
+    document.getElementById("lead").innerHTML=
+      '記録した中で、体が重かった日は <b>'+heavy.length+'日</b>、'+
+      '軽かった日は <b>'+light.length+'日</b> でした。';
     const cnt={};
-    loK.forEach(k=>(data[k].parts||[]).forEach(p=>cnt[p]=(cnt[p]||0)+1));
+    heavy.forEach(k=>(data[k].parts||[]).forEach(p=>cnt[p]=(cnt[p]||0)+1));
     const rank=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,5);
     const ps=document.getElementById("partStats");
-    if(rank.length){
+    if(rank.length&&heavy.length){
       ps.hidden=false;
       document.getElementById("partRows").innerHTML=rank.map(([p,n])=>
         '<div class="prow"><span>'+p+'</span><span class="pb"><i style="width:'+
-        (n/loK.length*100)+'%"></i></span><span class="pn">'+n+'/'+loK.length+'</span></div>').join("");
+        (n/heavy.length*100)+'%"></i></span><span class="pn">'+n+'/'+heavy.length+'</span></div>').join("");
     }else{ps.hidden=true}
   }else{ins.hidden=true}
 }
