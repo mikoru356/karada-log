@@ -39,7 +39,7 @@ button{font-family:inherit}
 .chip.on{background:var(--olive-lt);border-color:var(--olive);color:var(--olive-dk)}
 .chip.pick{background:var(--olive-lt);border-color:var(--olive)}
 input[type=text],input[type=search],input[type=time],textarea{
-  width:100%;font-size:16px;font-family:inherit;border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:#fff;color:var(--ink)}
+  min-width:0;max-width:100%;-webkit-appearance:none;appearance:none;width:100%;font-size:16px;font-family:inherit;border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:#fff;color:var(--ink)}
 textarea{min-height:76px;resize:vertical}
 .row2{display:flex;gap:8px;margin-top:8px}
 .row2 .grow{flex:1}
@@ -70,8 +70,8 @@ details[open] summary::before{content:"▾ "}
 .seg .nm{width:2.2em;font-size:13px;color:var(--muted)}
 .seg button{flex:1;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 0;font-size:14px;color:var(--ink)}
 .seg button.on{background:var(--olive-lt);border-color:var(--olive);color:var(--olive-dk);font-weight:600}
-.times{display:flex;gap:10px}.times>div{flex:1}
-input[type=date],input[type=number]{width:100%;font-size:16px;font-family:inherit;border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:#fff;color:var(--ink)}
+.times{display:flex;gap:10px}.times>div{flex:1;min-width:0}
+input[type=date],input[type=number]{width:100%;min-width:0;max-width:100%;-webkit-appearance:none;appearance:none;text-align:left;min-height:46px;font-size:16px;font-family:inherit;border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:#fff;color:var(--ink)}
 .ch-main{font-size:22px;color:var(--ink)}
 .ch-main b{font-size:40px;color:var(--olive-dk);font-weight:700;margin:0 2px}
 .ch-sub{font-size:13px;color:var(--muted);margin-top:2px}
@@ -450,9 +450,12 @@ function forestView(){
   return h;
 }
 
+const APP_VER = "2026-10-13 c";
 function dataView(){
   return '<h1>データ</h1>'+
     (!canSave ? '<div class="warn">'+esc(loadErr)+'</div>' : '')+
+    '<div class="card"><h2>アプリの版</h2><p class="hint" style="margin:0 0 8px">いまの版：'+APP_VER+'。アップロードしたのに画面が変わらないときは、下のボタンで最新版を読み込み直します（記録は消えません）。</p>'+
+    '<div class="row2"><button class="small pri" data-act="refresh">最新版に更新</button></div></div>'+
     '<div class="card"><h2>書き出す（バックアップ）</h2><p class="hint" style="margin:0 0 8px">記録 '+dateKeys().length+' 日分。コピーして、メモなどに保存しておくと安心です。</p>'+
     '<textarea id="exp" readonly style="min-height:90px">'+esc(JSON.stringify(db))+'</textarea>'+
     '<div class="row2"><button class="small pri" data-act="copy-all">全部コピー</button></div></div>'+
@@ -657,6 +660,9 @@ document.addEventListener("click", e => {
       break;
     }
     case "copy-all": copyText(JSON.stringify(db)); break;
+    case "refresh":
+      try { location.replace(location.pathname + "?v=" + Date.now()); } catch(err){ location.reload(); }
+      break;
     case "import": importData(); break;
   }
 });
