@@ -1,703 +1,724 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>体と睡眠のログ</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="体と睡眠">
-<meta name="theme-color" content="#141728">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="みこる🌻朝活と断捨離">
+<meta name="theme-color" content="#fbf7ec">
+<title>みこる🌻朝活と断捨離～ごきげんな毎日へ～</title>
 <style>
 :root{
-  --ink:#141728;--ink-2:#1D2138;--ink-3:#262B47;
-  --night:#4A56A6;--dusk:#9096C8;--day:#E5B96A;--tense:#D8687F;
-  --leaf:#7FA88A;--paper:#EEEDF4;--mute:#7B80A3;--r:14px;
+  --bg:#fbf7ec; --card:#fffdf6; --ink:#3b3a2f; --muted:#8a8670; --line:#ece4cc;
+  --olive:#6f8f72; --olive-dk:#4d6b50; --olive-lt:#e4ecdc;
+  --sun:#f4c542; --sun-lt:#fdf1c8; --soil:#e6d8b8;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;padding:0}
-body{
-  background:radial-gradient(120% 70% at 50% -10%,#232849 0%,rgba(35,40,73,0) 60%),var(--ink);
-  color:var(--paper);
-  font-family:"Noto Sans JP","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
-  font-size:15px;line-height:1.7;min-height:100vh;padding:22px 16px 60px;
-}
-.wrap{max-width:560px;margin:0 auto}
-
-header{margin-bottom:16px}
-.eyebrow{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:11px;
-  letter-spacing:.22em;text-transform:uppercase;color:var(--mute);margin:0 0 6px}
-h1{font-family:"Bricolage Grotesque","Noto Sans JP",system-ui,sans-serif;
-  font-weight:800;font-size:27px;line-height:1.25;margin:0 0 8px;letter-spacing:-.01em}
-.sub{color:var(--mute);font-size:13px;margin:0}
-
-/* date picker row */
-.warn{background:rgba(216,104,127,.12);border:1px solid rgba(216,104,127,.5);
-  border-radius:12px;padding:13px 15px;margin-bottom:14px;font-size:12.5px;line-height:1.65}
-.warn b{color:var(--tense)}
-.bk{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
-.bk button{font-family:inherit;font-size:13px;font-weight:700;border-radius:10px;padding:12px 8px;
-  cursor:pointer;background:var(--ink-3);border:1px solid rgba(255,255,255,.1);color:var(--paper)}
-.bk button:active{opacity:.65}
-.bk button:focus-visible{outline:2px solid var(--paper);outline-offset:2px}
-#bkBox{font-family:ui-monospace,monospace;font-size:11px;min-height:80px}
-
-.pick{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:center;margin-bottom:14px}
-.pick label{font-size:12px;color:var(--mute);white-space:nowrap}
-.pick input[type=date]{
-  background:var(--ink-2);border:1px solid rgba(255,255,255,.08);border-radius:10px;
-  color:var(--paper);font-family:inherit;font-size:14px;padding:10px 12px;width:100%;
-}
-.pick input[type=date]:focus-visible{outline:2px solid var(--dusk);outline-offset:1px}
-.editbar{display:none;gap:8px;margin-bottom:14px}
-.editbar.on{display:flex}
-.editbar button{flex:1;font-family:inherit;font-size:13px;font-weight:700;
-  border-radius:10px;padding:12px 8px;cursor:pointer;transition:opacity .15s}
-.editbar button:active{opacity:.65}
-.editbar button:focus-visible{outline:2px solid var(--paper);outline-offset:2px}
-.editbar .back{background:rgba(74,86,166,.22);border:1px solid rgba(168,178,240,.5);color:#BFC6FF}
-.editbar .del{background:rgba(216,104,127,.12);border:1px solid rgba(216,104,127,.5);color:var(--tense)}
-
-.card{background:var(--ink-2);border:1px solid rgba(255,255,255,.06);
-  border-radius:var(--r);padding:18px 16px;margin-bottom:14px}
-.card h2{font-size:13px;font-weight:700;letter-spacing:.06em;margin:0 0 16px;
-  color:var(--dusk);display:flex;align-items:center;gap:8px}
-.card h2::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;flex:none}
-.card.evening h2{color:var(--day)}
-
-/* growth */
-.grow{padding:20px 16px 16px;text-align:center}
-.grow .dayno{font-family:"Bricolage Grotesque",system-ui,sans-serif;
-  font-size:12px;letter-spacing:.14em;color:var(--mute);margin:0 0 2px;text-transform:uppercase}
-.grow .dayno b{color:var(--paper);font-size:20px;font-weight:800;letter-spacing:0}
-.grow svg{display:block;margin:6px auto 2px}
-.grow .cap{font-size:13px;color:#C9D6C4;margin:0 0 16px}
-.grow .track{display:grid;grid-template-columns:repeat(14,1fr);gap:4px}
-.grow .track i{height:22px;border-radius:5px;background:var(--ink-3);display:block}
-.grow .track i.half{background:rgba(74,86,166,.42)}
-.grow .track i.full{background:var(--night)}
-.grow .track i.now{box-shadow:inset 0 0 0 2px var(--dusk)}
-.grow .foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:11px}
-.grow .msg{font-size:12px;color:var(--mute);margin:0;line-height:1.6;text-align:left}
-.grow .msg b{color:#A8B2F0;font-weight:700}
-.jump{background:none;border:none;color:var(--dusk);font-family:inherit;font-size:12px;
-  font-weight:700;cursor:pointer;white-space:nowrap;padding:6px 0;text-decoration:underline}
-.jump:focus-visible{outline:2px solid var(--paper);outline-offset:2px}
-
-.field{margin-bottom:20px}
-.field:last-child{margin-bottom:0}
-.flabel{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-bottom:9px}
-.flabel .val{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:600;font-size:19px}
-.flabel .val.day{color:var(--day)}
-.flabel .unit{font-size:12px;color:var(--mute);margin-left:2px}
-.hint{font-size:11px;color:var(--mute);margin:-4px 0 9px}
-
-.stamp{display:grid;grid-template-columns:1fr auto;gap:9px;align-items:center}
-.stamp input[type=time]{
-  background:var(--ink-3);border:1px solid rgba(255,255,255,.06);border-radius:10px;
-  color:var(--paper);font-family:"Bricolage Grotesque",system-ui,sans-serif;
-  font-size:22px;font-weight:600;padding:11px 13px;width:100%;
-}
-.stamp input[type=time]:focus-visible{outline:2px solid var(--dusk);outline-offset:1px}
-.now{font-family:inherit;font-size:13px;font-weight:700;white-space:nowrap;
-  border:1px solid rgba(168,178,240,.5);background:rgba(74,86,166,.22);
-  color:#BFC6FF;border-radius:10px;padding:13px 16px;cursor:pointer;transition:opacity .15s}
-.now.amber{border-color:rgba(229,185,106,.5);background:rgba(229,185,106,.14);color:var(--day)}
-.now:active{opacity:.65}
-.now:focus-visible{outline:2px solid var(--paper);outline-offset:2px}
-.dur{margin-top:13px;background:var(--ink-3);border-radius:10px;padding:13px 15px;
-  display:flex;justify-content:space-between;align-items:baseline}
-.dur .lb{font-size:12px;color:var(--mute)}
-.dur .v{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:27px;font-weight:800;color:#A8B2F0}
-.dur .v.none{font-size:13px;font-weight:400;color:var(--mute);font-family:inherit}
-.dur .unit{font-size:12px;color:var(--mute);margin-left:2px}
-
-input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:26px;background:transparent;margin:0;display:block}
-input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:99px;background:var(--ink-3)}
-input[type=range]::-moz-range-track{height:6px;border-radius:99px;background:var(--ink-3)}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;
-  background:var(--paper);margin-top:-9px;cursor:pointer;border:5px solid #A9822F}
-input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--paper);
-  border:5px solid #A9822F;cursor:pointer}
-input[type=range]:focus-visible::-webkit-slider-thumb{outline:2px solid var(--paper);outline-offset:3px}
-
-.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.steps button{font-family:inherit;font-size:12px;color:var(--mute);background:var(--ink-3);
-  border:1px solid transparent;border-radius:10px;padding:11px 2px;cursor:pointer;
-  transition:background .15s,color .15s,border-color .15s;
-  display:flex;flex-direction:column;align-items:center;gap:6px}
-.steps button .dot{width:9px;height:9px;border-radius:50%;background:var(--tense);transition:transform .15s}
-.steps button[data-v="0"] .dot{opacity:.22}
-.steps button[data-v="1"] .dot{opacity:.45}
-.steps button[data-v="2"] .dot{opacity:.72}
-.steps button[data-v="3"] .dot{opacity:1}
-.steps button[aria-pressed=true]{background:rgba(216,104,127,.12);border-color:rgba(216,104,127,.5);color:var(--paper)}
-.steps button[aria-pressed=true] .dot{transform:scale(1.35)}
-.steps button:focus-visible{outline:2px solid var(--paper);outline-offset:2px}
-
-.chips{display:flex;flex-wrap:wrap;gap:7px}
-.chips button{font-family:inherit;font-size:13px;color:var(--mute);background:var(--ink-3);
-  border:1px solid transparent;border-radius:99px;padding:8px 14px;cursor:pointer;
-  transition:background .15s,color .15s,border-color .15s}
-.chips button[aria-pressed=true]{background:rgba(216,104,127,.14);border-color:rgba(216,104,127,.55);
-  color:var(--paper);font-weight:500}
-.chips button:focus-visible{outline:2px solid var(--paper);outline-offset:2px}
-
-textarea{width:100%;background:var(--ink-3);border:1px solid rgba(255,255,255,.06);
-  border-radius:10px;color:var(--paper);font-family:inherit;font-size:14px;
-  padding:11px;resize:vertical;min-height:62px}
-textarea:focus-visible{outline:2px solid var(--dusk);outline-offset:1px}
-
-.save{width:100%;margin-top:4px;padding:15px;border:none;border-radius:12px;
-  background:var(--paper);color:var(--ink);cursor:pointer;font-family:inherit;
-  font-weight:700;font-size:15px;transition:opacity .15s}
-.save:active{opacity:.75}
-.save:focus-visible{outline:2px solid var(--dusk);outline-offset:3px}
-
-.insight{background:linear-gradient(160deg,#2A2246 0%,#1D2138 70%);border:1px solid rgba(216,104,127,.28)}
-.insight h2{color:var(--tense)}
-.insight .lead{font-size:14px;margin:0 0 16px;line-height:1.75}
-.insight .lead b{color:var(--tense);font-weight:700}
-.cmp{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;text-align:center}
-.cmp .n{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:31px;font-weight:800;line-height:1;display:block}
-.cmp .cap{font-size:11px;color:var(--mute);display:block;margin-top:7px;line-height:1.5}
-.cmp .vs{color:var(--mute);font-size:11px}
-.cmp .lo .n{color:var(--tense)}
-.cmp .hi .n{color:#8FD6C2}
-.parts{margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08)}
-.parts h3{font-size:12px;color:var(--dusk);margin:0 0 12px;font-weight:700}
-.prow{display:grid;grid-template-columns:64px 1fr 34px;gap:9px;align-items:center;margin-bottom:8px;font-size:12px}
-.prow .pb{height:7px;border-radius:99px;background:var(--ink-3);overflow:hidden}
-.prow .pb i{display:block;height:100%;background:var(--tense);border-radius:99px}
-.prow .pn{color:var(--mute);text-align:right;font-variant-numeric:tabular-nums}
-
-
-
-.dtype{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.dtype button{font-family:inherit;font-size:13px;font-weight:700;color:var(--mute);
-  background:var(--ink-3);border:1px solid transparent;border-radius:10px;
-  padding:12px 4px;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
-.dtype button[aria-pressed=true]{background:rgba(144,150,200,.16);
-  border-color:rgba(144,150,200,.6);color:var(--paper)}
-.dtype button:focus-visible{outline:2px solid var(--paper);outline-offset:2px}
-.tasks{display:flex;flex-direction:column;gap:8px}
-.tasks button{font-family:inherit;font-size:14px;color:var(--mute);background:var(--ink-3);
-  border:1px solid transparent;border-radius:11px;padding:14px 15px;cursor:pointer;
-  display:flex;align-items:center;gap:11px;text-align:left;
-  transition:background .15s,color .15s,border-color .15s}
-.tasks button .bx{width:20px;height:20px;border-radius:6px;flex:none;
-  border:2px solid var(--mute);display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:800;color:var(--ink)}
-.tasks button[aria-pressed=true]{background:rgba(229,185,106,.13);
-  border-color:rgba(229,185,106,.55);color:var(--paper);font-weight:500}
-.tasks button[aria-pressed=true] .bx{background:var(--day);border-color:var(--day)}
-.tasks button:focus-visible{outline:2px solid var(--paper);outline-offset:2px}
-.tasks .sub{font-size:11px;color:var(--mute);display:block;font-weight:400}
-
-.week{background:linear-gradient(160deg,#2E2A1E 0%,#1D2138 75%);
-  border:1px solid rgba(229,185,106,.3)}
-.wk{display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:center}
-.wk>div{background:rgba(0,0,0,.18);border-radius:11px;padding:15px 8px}
-.wk .n{font-family:"Bricolage Grotesque",system-ui,sans-serif;
-  font-size:32px;font-weight:800;color:var(--day);line-height:1}
-.wk .u{font-size:12px;color:var(--mute);margin-left:3px}
-.wk .cap{display:block;font-size:11px;color:var(--mute);margin-top:9px;line-height:1.5}
-.wkmsg{font-size:12px;color:var(--mute);margin:14px 0 0;line-height:1.65}
-.wkmsg b{color:var(--day);font-weight:700}
-
-.bands{display:flex;flex-direction:column;gap:9px}
-.band{display:grid;grid-template-columns:36px 30px 1fr auto;gap:8px;align-items:center;
-  background:none;border:none;padding:2px 0;cursor:pointer;text-align:left;font-family:inherit}
-.band:focus-visible{outline:2px solid var(--dusk);outline-offset:3px;border-radius:6px}
-.band .d{font-size:11px;color:var(--mute);font-variant-numeric:tabular-nums}
-.band .h{font-size:11px;color:#A8B2F0;font-variant-numeric:tabular-nums;
-  font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:600}
-.band .bar{display:flex;height:9px;border-radius:99px;overflow:hidden;background:var(--ink-3)}
-.band .bar i{display:block;height:100%}
-.band .bar .s{background:var(--night)}
-.band .bar .w{background:var(--day);opacity:.8}
-.band .dots{display:flex;gap:4px}
-.band .dots i{width:8px;height:8px;border-radius:50%;background:var(--tense);display:block}
-.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--mute);
-  margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.06)}
-.legend span{display:flex;align-items:center;gap:5px}
-.legend i{width:9px;height:9px;border-radius:2px;display:block}
-.empty{color:var(--mute);font-size:13px;margin:0}
-.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(14px);
-  background:var(--paper);color:var(--ink);padding:11px 20px;border-radius:99px;
-  font-size:13px;font-weight:700;opacity:0;pointer-events:none;
-  transition:opacity .22s,transform .22s;z-index:9}
-.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+html,body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+  line-height:1.6}
+body{padding:calc(env(safe-area-inset-top) + 8px) 16px calc(env(safe-area-inset-bottom) + 84px);max-width:560px;margin:0 auto}
+h1{font-size:15px;margin:6px 0 10px;color:var(--olive-dk);letter-spacing:.04em;font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:14px}
+.card h2{font-size:14px;margin:0 0 8px;color:var(--olive-dk);font-weight:600}
+.datebar{display:flex;align-items:center;justify-content:space-between;margin:0 0 12px}
+.datebar .t{font-size:17px;font-weight:600}
+.datebar .t small{font-size:12px;color:var(--muted);font-weight:400;margin-left:6px}
+.iconbtn{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);font-size:18px;color:var(--olive-dk)}
+.iconbtn:disabled{opacity:.3}
+.tree{width:min(260px,70%);display:block;margin:0 auto}
+.cap{text-align:center;font-size:13px;color:var(--muted);margin:2px 0 12px}
+.cap b{color:var(--olive-dk);font-size:15px}
+button{font-family:inherit}
+.big{width:100%;border:0;border-radius:16px;padding:15px;font-size:17px;font-weight:600;color:#fff;background:var(--olive)}
+.big.sun{background:var(--sun);color:#4a3c0a}
+.big:active{transform:scale(.99)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:10px 14px;font-size:15px;color:var(--ink)}
+.chip.on{background:var(--olive-lt);border-color:var(--olive);color:var(--olive-dk)}
+.chip.pick{background:var(--olive-lt);border-color:var(--olive)}
+input[type=text],input[type=search],input[type=time],textarea{
+  width:100%;font-size:16px;font-family:inherit;border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:#fff;color:var(--ink)}
+textarea{min-height:76px;resize:vertical}
+.row2{display:flex;gap:8px;margin-top:8px}
+.row2 .grow{flex:1}
+.small{border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 14px;font-size:14px;color:var(--olive-dk)}
+.small.pri{background:var(--olive);border-color:var(--olive);color:#fff}
+.linkbtn{background:none;border:0;color:var(--muted);font-size:13px;padding:8px 4px;text-decoration:underline}
+.done{background:var(--olive-lt);border-radius:14px;padding:12px 14px;font-size:15px}
+.field{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 0}
+.flowers{display:flex;flex-wrap:wrap;gap:2px;min-height:34px;margin:2px 0 12px;font-size:23px;line-height:1.25}
+.flowers .empty{font-size:13px;color:var(--muted)}
+.flowers span.pop{animation:pop .5s ease}
+@keyframes pop{0%{transform:scale(.2) rotate(-40deg);opacity:0}70%{transform:scale(1.25)}100%{transform:scale(1);opacity:1}}
+.total{text-align:center}
+.total .n{font-size:44px;font-weight:700;color:var(--olive-dk);line-height:1.1}
+.total .n small{font-size:15px;font-weight:500;margin-left:4px}
+.total .s{font-size:12px;color:var(--muted)}
+.tdlist{margin-top:10px}
+.tditem{display:flex;align-items:center;gap:6px;padding:6px 0;border-top:1px dashed var(--line);font-size:15px}
+.tditem .tx{flex:1;word-break:break-all}
+.tditem .x{border:0;background:none;color:var(--muted);font-size:20px;width:36px;height:36px}
+details{border-top:1px solid var(--line)}
+details summary{list-style:none;padding:12px 2px;font-size:14px;color:var(--olive-dk);font-weight:600;cursor:pointer}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"▸ ";color:var(--muted)}
+details[open] summary::before{content:"▾ "}
+.lab{font-size:12px;color:var(--muted);margin:12px 0 4px}
+.seg{display:flex;gap:6px;align-items:center}
+.seg .nm{width:2.2em;font-size:13px;color:var(--muted)}
+.seg button{flex:1;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 0;font-size:14px;color:var(--ink)}
+.seg button.on{background:var(--olive-lt);border-color:var(--olive);color:var(--olive-dk);font-weight:600}
+.times{display:flex;gap:10px}.times>div{flex:1}
+input[type=date],input[type=number]{width:100%;font-size:16px;font-family:inherit;border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:#fff;color:var(--ink)}
+.ch-main{font-size:22px;color:var(--ink)}
+.ch-main b{font-size:40px;color:var(--olive-dk);font-weight:700;margin:0 2px}
+.ch-sub{font-size:13px;color:var(--muted);margin-top:2px}
+.ch-bar{height:10px;background:var(--sun-lt);border-radius:999px;margin-top:12px;overflow:hidden}
+.ch-bar>div{height:100%;background:var(--sun);border-radius:999px}
+.sleepinfo{margin-top:10px;font-size:14px}
+.sl-dur{font-size:22px;font-weight:700;color:var(--olive-dk)}
+.sl-ok{margin-left:10px;font-size:13px;color:var(--olive-dk);background:var(--olive-lt);border-radius:999px;padding:3px 10px}
+.sl-week{margin-top:6px;font-size:13px;color:var(--muted)}
+.sl-week b{color:var(--olive-dk)}
+.sv-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px}
+.sv-h{font-size:12px;color:var(--olive-dk);font-weight:600;border-bottom:1px solid var(--line);padding-bottom:4px}
+.sv-k{font-size:11px;color:var(--muted);margin-top:8px}
+.sv-v{font-size:20px;font-weight:700;color:var(--ink);line-height:1.2}
+.sv-v small{font-size:12px;font-weight:500;color:var(--muted);margin-left:2px}
+.sv-note{margin-top:12px;font-size:14px;background:var(--olive-lt);border-radius:12px;padding:9px 12px}
+.tabs{position:fixed;left:0;right:0;bottom:0;background:rgba(255,253,246,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);
+  display:flex;justify-content:center;padding:6px 8px calc(env(safe-area-inset-bottom) + 6px);z-index:5}
+.tabs .in{display:flex;width:100%;max-width:560px}
+.tabs button{flex:1;background:none;border:0;padding:6px 0;font-size:11px;color:var(--muted)}
+.tabs button .e{display:block;font-size:22px;line-height:1.2}
+.tabs button.on{color:var(--olive-dk);font-weight:700}
+.mh{display:flex;align-items:center;justify-content:space-between;margin:16px 0 4px}
+.mh b{font-size:15px;color:var(--olive-dk)}
+.lrow{display:flex;gap:10px;padding:9px 0;border-top:1px dashed var(--line);font-size:15px;align-items:center}
+.lrow .d{width:3.6em;color:var(--muted);font-size:13px;flex:none}
+.lrow .tx{flex:1;word-break:break-all}
+.lrow .x{border:0;background:none;color:var(--muted);font-size:20px;width:36px;height:36px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.grid .cell{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:8px 6px;text-align:center}
+.grid .cell svg{width:100%;display:block}
+.grid .cell .l{font-size:13px;color:var(--olive-dk);font-weight:600}
+.grid .cell .l small{color:var(--muted);font-weight:400}
+.hint{font-size:13px;color:var(--muted)}
+.warn{background:#fdeaea;border:1px solid #e9b5b5;border-radius:14px;padding:12px;font-size:14px;margin-bottom:12px}
+#toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 84px);transform:translateX(-50%);background:#3b3a2f;color:#fff;
+  padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:9;max-width:90%}
+#toast.show{opacity:.95}
 </style>
 </head>
 <body>
-<div class="wrap">
-
-<header>
-  <p class="eyebrow">Sleep &amp; Body</p>
-  <h1>体と睡眠のログ</h1>
-  <p class="sub" id="today"></p>
-</header>
-
-<div class="warn" id="warn" hidden></div>
-
-<div class="pick">
-  <label for="pickDate">記録する日</label>
-  <input type="date" id="pickDate">
-</div>
-<div class="editbar" id="editbar">
-  <button class="back" id="backToday" type="button">今日に戻る</button>
-  <button class="del" id="delDay" type="button">この日を削除</button>
-</div>
-
-<section class="card grow">
-  <p class="dayno">Day <b id="dayNo">1</b></p>
-  <div id="flower"></div>
-  <p class="cap" id="growCap"></p>
-  <div class="track" id="track"></div>
-  <div class="foot">
-    <p class="msg" id="progMsg"></p>
-    <button class="jump" id="jump" type="button">一覧 ↓</button>
-  </div>
-</section>
-
-<section class="card">
-  <h2>朝｜起きたとき</h2>
-  <div class="field">
-    <div class="flabel"><label for="wake">起床時刻</label></div>
-    <div class="stamp">
-      <input type="time" id="wake">
-      <button class="now" id="wakeNow" type="button">今おきた</button>
-    </div>
-    <div class="dur">
-      <span class="lb">前夜の睡眠</span>
-      <span id="durBox"><span class="v none">就寝の記録待ち</span></span>
-    </div>
-  </div>
-  <div class="field">
-    <div class="flabel"><span>起きたときの体の重さ</span></div>
-    <div class="steps" data-key="m" role="group" aria-label="起きたときの体の重さ"></div>
-  </div>
-</section>
-
-<section class="card evening">
-  <h2>夜｜1日をふりかえる</h2>
-  <div class="field" id="taskField">
-    <div class="flabel"><span id="taskLabel">この日は</span></div>
-    <div class="dtype" id="dtype" role="group" aria-label="勤務日か休みの日か">
-      <button type="button" data-t="work">勤務日</button>
-      <button type="button" data-t="off">休みの日</button>
-    </div>
-    <p class="hint" id="taskHint" style="margin:13px 0 9px">できたことにチェック</p>
-    <div class="tasks" id="tasks"></div>
-  </div>
-  <div class="field">
-    <div class="flabel"><span>日中の体の重さ</span></div>
-    <div class="steps" data-key="a" role="group" aria-label="日中の体の重さ"></div>
-  </div>
-  <div class="field">
-    <div class="flabel"><span>寝る前の体の重さ</span></div>
-    <div class="steps" data-key="n" role="group" aria-label="寝る前の体の重さ"></div>
-  </div>
-  <div class="field">
-    <div class="flabel"><span>つらかったところ</span></div>
-    <p class="hint">いくつでも。なければ選ばなくて大丈夫です</p>
-    <div class="chips" id="parts" role="group" aria-label="つらかったところ"></div>
-  </div>
-  <div class="field">
-    <label class="flabel" for="memo"><span>メモ</span></label>
-    <textarea id="memo" placeholder="何をしていた日か（例：座りっぱなし6時間、夜まで画像制作）"></textarea>
-  </div>
-  <div class="field">
-    <div class="flabel"><label for="bed">就寝時刻</label></div>
-    <div class="stamp">
-      <input type="time" id="bed">
-      <button class="now amber" id="bedNow" type="button">今からねる</button>
-    </div>
-    <p class="hint" style="margin:9px 0 0">タップすると自動で保存されます</p>
-  </div>
-  <button class="save" id="save">この日を記録する</button>
-</section>
-
-<section class="card week" id="week">
-  <h2 style="color:var(--day)">今週の作業時間</h2>
-  <div class="wk">
-    <div><span class="n" id="wkMin">0</span><span class="u">分</span>
-      <span class="cap">平日<br>夜15分＋昼15分</span></div>
-    <div><span class="n" id="wkHr">0</span><span class="u">時間</span>
-      <span class="cap">休みの日<br>朝1時間</span></div>
-  </div>
-  <p class="wkmsg" id="wkMsg"></p>
-</section>
-
-<section class="card insight" id="insight" hidden>
-  <h2>体のようす</h2>
-  <p class="lead" id="lead"></p>
-  <div class="parts" id="partStats" hidden>
-    <h3>体が重い日に出やすいところ</h3>
-    <div id="partRows"></div>
-  </div>
-</section>
-
-<section class="card" id="listCard">
-  <h2 style="color:var(--paper)">これまでの日々</h2>
-  <div class="bands" id="bands"></div>
-  <p class="empty" id="empty">まだ記録がありません。今夜ぶんから始めましょう。</p>
-  <div class="legend">
-    <span><i style="background:var(--night)"></i>睡眠</span>
-    <span><i style="background:var(--day)"></i>確保できた作業</span>
-    <span><i style="background:var(--tense);border-radius:50%"></i>体（朝・日中・夜）</span>
-  </div>
-</section>
-
-<section class="card">
-  <h2 style="color:var(--mute)">バックアップ</h2>
-  <div class="bk">
-    <button id="bkOut" type="button">書き出す</button>
-    <button id="bkIn" type="button">読み込む</button>
-  </div>
-  <textarea id="bkBox" placeholder="「書き出す」でここに記録が出ます。全選択してコピーし、チャットに貼っておけば、いつでも復元できます。"></textarea>
-</section>
-
-</div>
-<div class="toast" id="toast">記録しました</div>
+<div id="app"></div>
+<div class="tabs"><div class="in" id="tabs"></div></div>
+<div id="toast"></div>
 
 <script>
-const LABELS=["軽い","少し","重い","つらい"];
-const PARTS=["首・肩","背中","腰","目","頭","脚","手首","全身のだるさ","気分"];
-const KEY="body-sleep-log-v2";
-let data={}, cur={m:1,a:1,n:1}, curParts=new Set(), viewKey=null;
+"use strict";
+/* ===== 保存データ =====
+   キーは旧アプリと同じ。日付キー → 1日分の記録。
+   旧フィールド(wake/bed/work/m/a/n/parts/memo/dayType/noon/night/morning)には触れず、
+   新しい記録は asa(朝活) と items(整えたもの) として同じ日の記録に追加する。 */
+const KEY = "body-sleep-log-v2";
+const BACKUP_KEY = KEY + "-backup-20261013";
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+let db = {}, canSave = true, loadErr = "";
 
-const store={
-  load(){try{return JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){return {}}},
-  save(d){try{localStorage.setItem(KEY,JSON.stringify(d));return true}catch(e){return false}}
-};
-function showMode(){
-  const w=document.getElementById("warn");
-  let ok=true;
-  try{localStorage.setItem("__probe__","1");localStorage.removeItem("__probe__")}catch(e){ok=false}
-  if(ok){w.hidden=true;return}
-  w.hidden=false;
-  w.innerHTML='<b>この環境では記録が保存できません。</b>Safari のプライベートブラウズを解除するか、'+
-    '別のブラウザで開いてみてください。';
-}
-
-const pad=n=>String(n).padStart(2,"0");
-const fmt=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
-const todayKey=()=>fmt(new Date());
-function shiftKey(k,n){const [y,m,d]=k.split("-").map(Number);
-  const dt=new Date(y,m-1,d);dt.setDate(dt.getDate()+n);return fmt(dt)}
-function diffDays(a,b){const [y1,m1,d1]=a.split("-").map(Number),[y2,m2,d2]=b.split("-").map(Number);
-  return Math.round((new Date(y2,m2-1,d2)-new Date(y1,m1-1,d1))/86400000)}
-const toMin=t=>{if(!t)return null;const [h,m]=t.split(":").map(Number);return h*60+m};
-
-function sleepOf(k){
-  const prev=data[shiftKey(k,-1)], cu=data[k];
-  if(!prev||!prev.bed||!cu||!cu.wake)return null;
-  let d=toMin(cu.wake)-toMin(prev.bed);
-  if(d<=0)d+=1440;
-  if(d>16*60)return null;
-  return d/60;
-}
-const startKey=()=>{const a=Object.keys(data).sort();return a.length?a[0]:todayKey()};
-
-function flowerSVG(n){
-  const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
-  const g=cl(n,0,14);
-  const soil='<ellipse cx="60" cy="130" rx="34" ry="7" fill="#2A2F4D"/>';
-  if(g===0){
-    return '<svg width="130" height="150" viewBox="0 0 120 150" aria-label="種">'+soil+
-      '<ellipse cx="60" cy="126" rx="6" ry="4.5" fill="#8A6B4F"/></svg>';
-  }
-  const stemH=cl(10+g*4.6,10,74);
-  const topY=130-stemH;
-  const leafS=cl((g-2)/4,0,1);
-  const budR=g>=7?cl(4+(g-7)*1.1,0,11):0;
-  const ps=cl((g-10)/4,0,1);
-  const headY=topY-budR*0.6;
-  let s='<svg width="130" height="150" viewBox="0 0 120 150" aria-label="育っている花">'+soil;
-  s+='<path d="M60 130 Q'+(60+Math.sin(g)*3)+' '+((130+topY)/2)+' 60 '+topY+'" stroke="#7FA88A" stroke-width="3.4" fill="none" stroke-linecap="round"/>';
-  if(leafS>0){
-    const ly=130-stemH*0.45, lw=17*leafS, lh=7.5*leafS;
-    s+='<ellipse cx="'+(60-lw*0.8)+'" cy="'+ly+'" rx="'+lw+'" ry="'+lh+'" fill="#7FA88A" opacity=".85" transform="rotate(-18 '+(60-lw*0.8)+' '+ly+')"/>';
-    if(g>=5){const ly2=130-stemH*0.68;
-      s+='<ellipse cx="'+(60+lw*0.8)+'" cy="'+ly2+'" rx="'+lw+'" ry="'+lh+'" fill="#7FA88A" opacity=".7" transform="rotate(18 '+(60+lw*0.8)+' '+ly2+')"/>';}
-  }
-  if(budR>0){
-    if(ps>0){
-      s+='<g transform="translate(60,'+headY+')">';
-      for(let i=0;i<12;i++){
-        s+='<ellipse cx="0" cy="'+(-(budR+10*ps))+'" rx="'+(4.6*ps)+'" ry="'+(10.5*ps)+
-           '" fill="#E5B96A" opacity=".92" transform="rotate('+(i*30)+')"/>';
-      }
-      s+='</g><circle cx="60" cy="'+headY+'" r="'+budR+'" fill="#8A6B4F"/>'+
-         '<circle cx="60" cy="'+headY+'" r="'+(budR*0.55)+'" fill="#6B5238"/>';
-    }else{
-      s+='<ellipse cx="60" cy="'+headY+'" rx="'+(budR*0.85)+'" ry="'+(budR*1.15)+'" fill="#8FBF9B"/>'+
-         '<ellipse cx="'+(60-budR*0.3)+'" cy="'+headY+'" rx="'+(budR*0.3)+'" ry="'+(budR*0.95)+'" fill="#A8D4B2" opacity=".7"/>';
+(function init(){
+  let raw = null;
+  try { raw = localStorage.getItem(KEY); }
+  catch(e){ canSave = false; loadErr = "この画面ではデータを保存できません。ホーム画面のアイコンから開いてください。"; return; }
+  if (raw) {
+    try {
+      const o = JSON.parse(raw);
+      if (!o || typeof o !== "object" || Array.isArray(o)) throw new Error("shape");
+      db = o;
+      try { if (localStorage.getItem(BACKUP_KEY) === null) localStorage.setItem(BACKUP_KEY, raw); } catch(e){}
+    } catch(e){
+      canSave = false;
+      loadErr = "保存データを読み込めませんでした。データを守るため、保存を止めています。";
     }
   }
-  return s+'</svg>';
+})();
+
+function save(){
+  if (!canSave) return false;
+  try { localStorage.setItem(KEY, JSON.stringify(db)); return true; }
+  catch(e){ toast("保存に失敗しました"); return false; }
 }
-function growCaption(n){
-  if(n===0)return "種をまいたところ";
-  if(n<=2)return "芽が出ました";
-  if(n<=4)return "葉がひらいてきました";
-  if(n<=6)return "背がのびています";
-  if(n<=9)return "つぼみがふくらんでいます";
-  if(n<=13)return "ほころびはじめました";
-  return "満開です 🌻";
+function edit(date, fn){
+  if (!canSave){ toast(loadErr || "保存できません"); return false; }
+  const r = db[date] || (db[date] = {});
+  fn(r);
+  if (Object.keys(r).length === 0) delete db[date];
+  return save();
 }
 
-document.querySelectorAll(".steps").forEach(g=>{
-  const k=g.dataset.key;
-  LABELS.forEach((lab,i)=>{
-    const b=document.createElement("button");
-    b.type="button";b.dataset.v=i;
-    b.setAttribute("aria-pressed",String(cur[k]===i));
-    b.innerHTML='<span class="dot"></span>'+lab;
-    b.onclick=()=>{cur[k]=i;[...g.children].forEach((c,j)=>c.setAttribute("aria-pressed",String(j===i)))};
-    g.appendChild(b);
+/* ===== 日付 ===== */
+const pad = n => String(n).padStart(2,"0");
+const ymd = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const parseYmd = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y,m-1,d); };
+const WD = ["日","月","火","水","木","金","土"];
+const todayKey = () => ymd(new Date());
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/* ===== 集計 ===== */
+const dateKeys = () => Object.keys(db).filter(k => DATE_RE.test(k) && db[k] && typeof db[k] === "object");
+const asaDays = mk => dateKeys().filter(k => k.startsWith(mk) && db[k].asa).length;
+function allItems(){
+  const out = [];
+  dateKeys().sort().forEach(k => {
+    (Array.isArray(db[k].items) ? db[k].items : []).forEach(it => out.push({date:k, id:it.id, t:it.t||"", at:it.at||0}));
   });
-});
-
-const partBox=document.getElementById("parts");
-PARTS.forEach(p=>{
-  const b=document.createElement("button");
-  b.type="button";b.textContent=p;b.setAttribute("aria-pressed","false");
-  b.onclick=()=>{
-    if(curParts.has(p)){curParts.delete(p);b.setAttribute("aria-pressed","false")}
-    else{curParts.add(p);b.setAttribute("aria-pressed","true")}
-  };
-  partBox.appendChild(b);
-});
-
-const wake=document.getElementById("wake"),
-      bed=document.getElementById("bed"),pickDate=document.getElementById("pickDate");
-
-/* 火〜金=勤務日 / 土日月=休みの日 */
-const isWork=k=>{const [y,m,d]=k.split("-").map(Number);
-  const w=new Date(y,m-1,d).getDay();return w>=2&&w<=5};
-const TASKS={
-  work:[["noon","昼休憩に15分","スマホでAIと壁打ち"],
-        ["night","夜22時から15分","PCを開く"]],
-  off :[["morning","朝5:30〜6:30に作業","前夜23時就寝が前提"]]
-};
-let curTasks={}, curType="work";
-const dtypeBox=document.getElementById("dtype");
-[...dtypeBox.children].forEach(b=>{
-  b.onclick=()=>{curType=b.dataset.t;paintType();renderTaskList()};
-});
-function paintType(){
-  [...dtypeBox.children].forEach(b=>
-    b.setAttribute("aria-pressed",String(b.dataset.t===curType)));
-}
-function renderTaskList(){
-  const box=document.getElementById("tasks"), set=TASKS[curType];
-  box.innerHTML="";
-  set.forEach(([id,ttl,sub])=>{
-    const b=document.createElement("button");
-    b.type="button";
-    b.setAttribute("aria-pressed",String(!!curTasks[id]));
-    b.innerHTML='<span class="bx">✓</span><span>'+ttl+'<span class="sub">'+sub+'</span></span>';
-    b.onclick=()=>{curTasks[id]=!curTasks[id];
-      b.setAttribute("aria-pressed",String(!!curTasks[id]))};
-    box.appendChild(b);
-  });
-}
-function buildTasks(k){
-  const e=data[k];
-  curType = (e && e.dayType) ? e.dayType : (isWork(k)?"work":"off");
-  paintType();renderTaskList();
+  return out;
 }
 
-function setSteps(k,v){const g=document.querySelector('.steps[data-key="'+k+'"]');
-  cur[k]=v;[...g.children].forEach((c,j)=>c.setAttribute("aria-pressed",String(j===v)))}
-function setParts(list){curParts=new Set(list||[]);
-  [...partBox.children].forEach(b=>b.setAttribute("aria-pressed",String(curParts.has(b.textContent))))}
-
-function showDur(){
-  const h=sleepOf(viewKey), box=document.getElementById("durBox");
-  box.innerHTML = h===null
-    ? '<span class="v none">就寝の記録待ち</span>'
-    : '<span class="v">'+h.toFixed(1)+'</span><span class="unit">時間</span>';
+/* ===== オリーブの木(SVG) ===== */
+const STAGES = [[0,"種"],[1,"芽"],[5,"苗"],[10,"若木"],[15,"大木"],[20,"実のなる木"]];
+function stageOf(days){
+  let i = 0;
+  for (let k = 0; k < STAGES.length; k++) if (days >= STAGES[k][0]) i = k;
+  return i;
 }
-function collect(){
-  return {wake:wake.value||"",bed:bed.value||"",dayType:curType,
-    noon:!!curTasks.noon,night:!!curTasks.night,morning:!!curTasks.morning,
-    m:cur.m,a:cur.a,n:cur.n,parts:[...curParts],memo:document.getElementById("memo").value};
+function rng(s){ s = (s % 2147483646) + 1; return () => (s = s * 16807 % 2147483647) / 2147483647; }
+function mixHex(c1, c2, t){
+  const p = h => [1,3,5].map(i => parseInt(h.substr(i,2),16));
+  const a = p(c1), b = p(c2);
+  return "#" + [0,1,2].map(i => Math.round(a[i]+(b[i]-a[i])*t).toString(16).padStart(2,"0")).join("");
 }
-function persist(msg){
-  data[viewKey]=Object.assign({},data[viewKey],collect());
-  store.save(data);
-  showDur();render();
-  const t=document.getElementById("toast");
-  t.textContent=msg||"記録しました";
-  t.classList.add("on");setTimeout(()=>t.classList.remove("on"),1700);
+const LEAF = ["#8fa88c","#a9bda5","#728f76","#b7c8b0"];
+function leaf(x,y,rot,sc,col){
+  return '<ellipse cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" rx="'+(11*sc).toFixed(1)+'" ry="'+(3.8*sc).toFixed(1)+
+    '" fill="'+col+'" transform="rotate('+rot.toFixed(0)+' '+x.toFixed(1)+' '+y.toFixed(1)+')"/>';
 }
-
-document.getElementById("wakeNow").onclick=()=>{
-  const d=new Date();wake.value=pad(d.getHours())+":"+pad(d.getMinutes());
-  persist("起床 "+wake.value);
-};
-document.getElementById("bedNow").onclick=()=>{
-  const d=new Date(), t=pad(d.getHours())+":"+pad(d.getMinutes());
-  if(d.getHours()<5 && viewKey===todayKey()){
-    const y=shiftKey(viewKey,-1);
-    data[y]=Object.assign({},data[y],{bed:t});
-    bed.value="";
-  }else{bed.value=t}
-  persist("就寝 "+t);
-};
-
-function loadDay(k){
-  viewKey=k;
-  const e=data[k]||{};
-  wake.value=e.wake||"";bed.value=e.bed||"";
-  curTasks={noon:!!e.noon,night:!!e.night,morning:!!e.morning};
-  buildTasks(k);
-  setSteps("m",e.m!==undefined?e.m:1);
-  setSteps("a",e.a!==undefined?e.a:1);
-  setSteps("n",e.n!==undefined?e.n:1);
-  setParts(e.parts);
-  document.getElementById("memo").value=e.memo||"";
-  pickDate.value=k;
-  const [y,mo,d]=k.split("-").map(Number);
-  const label=new Date(y,mo-1,d).toLocaleDateString("ja-JP",{month:"long",day:"numeric",weekday:"long"});
-  document.getElementById("today").textContent=
-    label+(k===todayKey()?"の記録":"の記録を編集中");
-  document.getElementById("editbar").classList.toggle("on",k!==todayKey());
-  document.getElementById("delDay").disabled=!data[k];
-  showDur();
-  window.scrollTo({top:0,behavior:"smooth"});
-}
-
-pickDate.max=todayKey();
-pickDate.onchange=()=>{if(pickDate.value)loadDay(pickDate.value)};
-document.getElementById("save").onclick=()=>persist();
-document.getElementById("backToday").onclick=()=>loadDay(todayKey());
-document.getElementById("jump").onclick=()=>
-  document.getElementById("listCard").scrollIntoView({behavior:"smooth",block:"start"});
-document.getElementById("delDay").onclick=()=>{
-  if(!data[viewKey])return;
-  if(!confirm(viewKey.replace(/-/g,"/")+" の記録を削除します。よろしいですか？"))return;
-  delete data[viewKey];
-  store.save(data);
-  loadDay(todayKey());render();
-  const t=document.getElementById("toast");
-  t.textContent="削除しました";
-  t.classList.add("on");setTimeout(()=>t.classList.remove("on"),1700);
-};
-
-const avg=a=>a.reduce((s,x)=>s+x,0)/a.length;
-const dayScore=e=>(e.m+e.a+e.n)/3;
-
-function renderGrow(){
-  const st=startKey(), tk=todayKey();
-  document.getElementById("dayNo").textContent=Math.max(1,diffDays(st,tk)+1);
-  let done=0,ready=0,html="";
-  for(let i=0;i<14;i++){
-    const k=shiftKey(st,i), has=!!data[k], ok=sleepOf(k)!==null;
-    if(has)done++;
-    if(ok&&data[k].m!==undefined)ready++;
-    html+='<i class="'+(ok?"full":has?"half":"")+(k===tk?" now":"")+'"></i>';
+function treeSVG(days, seed){
+  const G = 206, r = rng((seed||1) * 7919 + 13);
+  let s = '<ellipse cx="100" cy="'+G+'" rx="72" ry="9" fill="#e6d8b8"/>';
+  const wrap = body => '<svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="オリーブの木">'+body+'</svg>';
+  if (days <= 0){
+    s += '<ellipse cx="100" cy="'+(G-5)+'" rx="8" ry="5.5" fill="#8a6a45"/>'+
+         '<path d="M95 '+(G-6)+' Q100 '+(G-11)+' 105 '+(G-6)+'" stroke="#a98a62" stroke-width="1.5" fill="none"/>';
+    return wrap(s);
   }
-  document.getElementById("track").innerHTML=html;
-  document.getElementById("flower").innerHTML=flowerSVG(done);
-  document.getElementById("growCap").textContent=growCaption(done)+"（記録 "+done+"日）";
-  const left=14-done, m=document.getElementById("progMsg");
-  if(done===0)m.innerHTML='今夜「今からねる」を押すところから。<b>最初の1タップ</b>が一番大きい一歩です。';
-  else if(ready<3)m.innerHTML='あと<b>'+(3-ready)+'日</b>ぶん睡眠が計算できると、分析が出てきます。';
-  else if(left>0)m.innerHTML='残り<b>'+left+'日</b>。抜けてもリセットされません。';
-  else m.innerHTML='<b>2週間、達成です。</b>下の分析と一覧を見てみてください。';
+  const trunk = (bw, tw, topY, col) =>
+    '<path d="M'+(100-bw)+' '+G+' Q'+(100-tw-3)+' '+((G+topY)/2)+' '+(100-tw)+' '+topY+
+    ' L'+(100+tw)+' '+topY+' Q'+(100+tw+3)+' '+((G+topY)/2)+' '+(100+bw)+' '+G+' Z" fill="'+(col||"#8a6f50")+'"/>';
+  const branch = (x1,y1,x2,y2,w) =>
+    '<path d="M'+x1+' '+y1+' Q'+((x1+x2)/2+(x2<x1?-4:4))+' '+((y1+y2)/2+2)+' '+x2+' '+y2+'" stroke="#7a6247" stroke-width="'+w+'" stroke-linecap="round" fill="none"/>';
+  let cy, rx, ry, n;
+  if (days < 5){
+    const h = 34 + days * 9; cy = G - h;
+    s += '<path d="M100 '+G+' L100 '+(cy+4)+'" stroke="#7d8a58" stroke-width="3.5" stroke-linecap="round" fill="none"/>';
+    const cnt = days * 2 + 1;
+    for (let i = 0; i < cnt; i++){
+      const side = i % 2 ? 1 : -1, k = Math.floor(i/2);
+      s += leaf(100 + side*9, cy + k*9, side * -28, 1, LEAF[(i+1)%LEAF.length]);
+    }
+    s += leaf(100, cy-5, 90, .9, LEAF[0]);
+    return wrap(s);
+  }
+  let top = 0;
+  if (days < 10){ cy = G - (100 + (days-5)*4); rx = 30; ry = 20; n = 14 + (days-5)*2; s += trunk(5,3,cy+8,"#8a7a52"); }
+  else if (days < 15){
+    cy = G - (118 + (days-10)*3); rx = 46; ry = 30; n = 38 + (days-10)*4;
+    s += trunk(9,5,cy+14);
+    s += branch(100,cy+34,100-rx*.55,cy+ry*.15,3) + branch(100,cy+42,100+rx*.55,cy+ry*.1,3);
+  } else {
+    cy = 74; rx = 64; ry = 42; n = 96;
+    s += trunk(14,7,cy+24);
+    s += branch(100,cy+52,100-rx*.6,cy+ry*.2,4.5) + branch(100,cy+60,100+rx*.62,cy+ry*.15,4.5) + branch(100,cy+36,100,cy-ry*.2,4);
+  }
+  const cx = 100;
+  for (let i = 0; i < n; i++){
+    const a = r() * Math.PI * 2, u = Math.sqrt(r());
+    const x = cx + rx * u * Math.cos(a), y = cy + ry * u * Math.sin(a);
+    const rot = Math.cos(a) * 30 * (y > cy ? 1 : -1) + (r()-.5) * 50;
+    s += leaf(x, y, rot, days >= 15 ? 1.05 : .95, LEAF[Math.floor(r()*LEAF.length)]);
+  }
+  if (days >= 20){
+    const cnt = Math.min(days - 19, 16), ro = rng((seed||1) * 31 + 7);
+    for (let i = 0; i < cnt; i++){
+      const a = Math.PI * (0.12 + ro() * 0.76), u = 0.45 + ro() * 0.45;
+      const x = cx + rx * u * Math.cos(a), y = cy + ry * u * Math.sin(a) + 4;
+      const ripe = Math.min(1, (cnt - 1 - i) / 10);
+      s += '<ellipse cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" rx="5.2" ry="6.2" fill="'+mixHex("#9fb04f","#3d3042",ripe)+'"/>'+
+           '<ellipse cx="'+(x-1.6).toFixed(1)+'" cy="'+(y-2).toFixed(1)+'" rx="1.3" ry="1.8" fill="#fff" opacity=".35"/>';
+    }
+  }
+  return wrap(s);
+}
+function nextText(days){
+  if (days >= 20) return "実が " + Math.min(days - 19, 16) + " 粒";
+  const idx = stageOf(days), nx = STAGES[idx+1];
+  if (days <= 0) return "朝に何かしたら芽が出ます";
+  return "あと " + (nx[0]-days) + " 日で" + nx[1];
 }
 
+/* ===== 断捨離チャレンジ(設定は別キーに保存。日付の記録には混ぜない) ===== */
+const SET_KEY = "karada-settings-v1";
+let settings = {chStart: "2026-09-19", chGoal: 100};
+try {
+  const s = JSON.parse(localStorage.getItem(SET_KEY) || "null");
+  if (s && DATE_RE.test(s.chStart || "")) settings.chStart = s.chStart;
+  if (s && +s.chGoal >= 1 && +s.chGoal <= 1000) settings.chGoal = Math.floor(+s.chGoal);
+} catch(e){}
+function saveSettings(){ try { localStorage.setItem(SET_KEY, JSON.stringify(settings)); } catch(e){ toast("設定を保存できませんでした"); } }
+function challengeInfo(){
+  const start = parseYmd(settings.chStart), t = parseYmd(todayKey());
+  const n = Math.round((t - start) / 86400000) + 1, goal = settings.chGoal;
+  const end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + goal - 1);
+  return {n: n, goal: goal, left: goal - n, end: end};
+}
+function challengeCard(){
+  const c = challengeInfo(), endTxt = (c.end.getMonth()+1) + "/" + c.end.getDate();
+  let main, sub, pct;
+  if (c.n < 1){ main = '開始まで あと <b>'+(1-c.n)+'</b> 日'; sub = ''; pct = 0; }
+  else if (c.left < 0){ main = '<b>'+c.goal+'日</b> 達成 🎉'; sub = c.n + '日目になりました'; pct = 100; }
+  else if (c.left === 0){ main = '<b>ゴールの '+c.goal+'日目</b> 🎉'; sub = endTxt+' 達成！'; pct = 100; }
+  else { main = 'あと <b>'+c.left+'</b> 日'; sub = c.n + '日目 / ' + c.goal + '日　ゴール ' + endTxt; pct = Math.max(0, Math.min(100, c.n / c.goal * 100)); }
+  return '<div class="card"><h2>🌼 断捨離'+c.goal+'日チャレンジ</h2>'+
+    '<div class="ch-main">'+main+'</div>'+(sub ? '<div class="ch-sub">'+sub+'</div>' : '')+
+    '<div class="ch-bar"><div style="width:'+pct.toFixed(1)+'%"></div></div></div>';
+}
+
+/* ===== 睡眠 =====
+   bed は「その日の起床の前に寝た時刻」。bed が wake より遅い時刻(例 23:00)なら前の晩、早い時刻(例 00:30)なら日付をまたいだ後とみなす。 */
+const SLEEP_GOAL = 6;
+function toMin(s){ const m = /^(\d{1,2}):(\d{2})$/.exec(s || ""); return m ? (+m[1])*60 + (+m[2]) : null; }
+function sleepMinutes(r){
+  if (!r) return null;
+  const w = toMin(r.wake), b = toMin(r.bed);
+  if (w === null || b === null) return null;
+  let d = w - b; if (d < 0) d += 1440;
+  return d === 0 ? null : d;
+}
+function fmtDur(min){ const h = Math.floor(min/60), m = min % 60; return h + "時間" + (m ? m + "分" : ""); }
+function sleepInfoHTML(r){
+  const m = sleepMinutes(r);
+  let h = "";
+  if (m === null) h += '<span class="hint">就寝と起床を入れると、睡眠時間が出ます</span>';
+  else h += '<span class="sl-dur">'+fmtDur(m)+'</span>'+(m >= SLEEP_GOAL*60 ? '<span class="sl-ok">✓ '+SLEEP_GOAL+'時間以上</span>' : '');
+  const gi = goalInfo();
+  if (gi) h += '<div class="sl-week">今夜の目安：<b>'+fmtClock(gi.goal)+'</b> までに寝ると '+SLEEP_GOAL+'時間（最近の起床 '+fmtClock(gi.wake)+'）</div>';
+  /* 直近7日(選択日まで) */
+  const vals = []; const base = parseYmd(cur);
+  for (let i = 0; i < 7; i++){
+    const d = new Date(base); d.setDate(d.getDate() - i);
+    const x = sleepMinutes(db[ymd(d)]);
+    if (x !== null) vals.push(x);
+  }
+  if (vals.length){
+    const ok = vals.filter(x => x >= SLEEP_GOAL*60).length;
+    const avg = vals.reduce((a,b) => a+b, 0) / vals.length / 60;
+    h += '<div class="sl-week">直近7日　'+SLEEP_GOAL+'時間以上 <b>'+ok+'日</b>（記録 '+vals.length+'日）・平均 '+avg.toFixed(1)+'時間</div>';
+  }
+  return h;
+}
+
+/* ===== 画面状態 ===== */
+const ASA_CHOICES = ["断捨離5分","ストレッチ","読書","散歩","片付け","仕事・勉強","ゆっくり過ごした","その他"];
+const PARTS = ["目","頭","首・肩","背中","腰","気分","全身のだるさ"];
+const COND_LABEL = {1:"楽",2:"重め",3:"重い"};
+let cur = todayKey(), tab = "home", asaOpen = false, itemOpen = false, foldOpen = false, q = "", lastToday = todayKey();
+let popId = null;
+
+/* ===== 描画 ===== */
+function homeView(){
+  const d = parseYmd(cur), mk = cur.slice(0,7), mnum = d.getMonth()+1;
+  const r = db[cur] && typeof db[cur] === "object" ? db[cur] : {};
+  const days = asaDays(mk), si = stageOf(days);
+  const isToday = cur === todayKey();
+  const items = allItems();
+  const monthItems = items.filter(i => i.date.startsWith(mk));
+  const dayItems = Array.isArray(r.items) ? r.items : [];
+  let h = "";
+  if (!canSave) h += '<div class="warn">'+esc(loadErr)+'</div>';
+  h += '<h1>みこる🌻朝活と断捨離<br><span style="font-weight:400;font-size:13px;color:var(--muted)">～ごきげんな毎日へ～</span></h1>';
+  h += '<div class="datebar"><button class="iconbtn" data-act="prev" aria-label="前の日">‹</button>'+
+       '<div class="t">'+(d.getMonth()+1)+'月'+d.getDate()+'日（'+WD[d.getDay()]+'）<small>'+(isToday?"きょう":"")+'</small></div>'+
+       '<button class="iconbtn" data-act="next" aria-label="次の日"'+(cur >= todayKey() ? " disabled":"")+'>›</button></div>';
+
+  /* 木 */
+  h += '<div class="card"><h2>'+mnum+'月のオリーブ</h2>'+
+       '<div class="tree">'+treeSVG(days, d.getFullYear()*12 + mnum)+'</div>'+
+       '<div class="cap"><b>'+STAGES[si][1]+'</b>　朝活 '+days+' 日<br>'+esc(nextText(days))+'</div>';
+  if (r.asa){
+    h += '<div class="done">✓ 朝活した'+(r.asa.what ? '　<b>'+esc(r.asa.what)+'</b>' : '')+'</div>'+
+         '<div class="row2"><input type="text" id="asaNoteEdit" placeholder="ひとこと（あとからでもOK）" value="'+esc(r.asa.note||"")+'"></div>'+
+         '<div style="text-align:right"><button class="linkbtn" data-act="asa-undo">この日の朝活を取り消す</button></div>';
+  } else if (asaOpen){
+    h += '<div class="hint">朝に何かした？ 5分でもOK。ひとつ選ぶと記録されます。</div><div class="chips">'+
+         ASA_CHOICES.map(c => '<button class="chip pick" data-act="asa-pick" data-v="'+esc(c)+'">'+esc(c)+'</button>').join("")+'</div>'+
+         '<input type="text" id="asaNote" placeholder="ひとこと（空でもOK）">'+
+         '<div style="text-align:right"><button class="linkbtn" data-act="asa-close">やめる</button></div>';
+  } else {
+    h += '<button class="big" data-act="asa-open">🌿 朝活やった</button>';
+  }
+  h += '</div>';
+
+  /* 睡眠 */
+  h += '<div class="card"><h2>🌙 睡眠　<span style="font-weight:400;color:var(--muted)">目標 '+SLEEP_GOAL+'時間以上</span></h2>'+
+       '<div class="times"><div><div class="lab" style="margin-top:0">寝た時刻（前の晩）</div><input type="time" id="bed" value="'+esc(r.bed||"")+'"></div>'+
+       '<div><div class="lab" style="margin-top:0">起きた時刻</div><input type="time" id="wake" value="'+esc(r.wake||"")+'"></div></div>'+
+       '<div class="sleepinfo" id="sleepInfo">'+sleepInfoHTML(r)+'</div></div>';
+
+  /* 畑 */
+  const MAXF = 90;
+  const fl = monthItems.slice(-MAXF).map(i => '<span'+(i.id===popId?' class="pop"':'')+'>🌼</span>').join("");
+  h += '<div class="card"><h2>'+mnum+'月の花畑　<span style="font-weight:400;color:var(--muted)">'+monthItems.length+'輪</span></h2>'+
+       '<div class="flowers">'+(fl || '<span class="empty">整えると、ここに花が咲きます</span>')+
+       (monthItems.length > MAXF ? '<span class="empty">　+'+(monthItems.length-MAXF)+'</span>' : '')+'</div>';
+  if (itemOpen){
+    h += '<div class="row2"><input type="text" id="itemText" placeholder="何を整えた？（空でもOK）" enterkeyhint="done">'+
+         '<button class="small pri" data-act="item-add">追加</button></div>'+
+         '<div style="text-align:right"><button class="linkbtn" data-act="item-close">とじる</button></div>';
+  } else {
+    h += '<button class="big sun" data-act="item-open">🌼 整えた</button>';
+  }
+  if (dayItems.length){
+    h += '<div class="tdlist">'+dayItems.map(it =>
+      '<div class="tditem"><span class="tx">'+(it.t ? esc(it.t) : '<span class="hint">（名前なし）</span>')+'</span>'+
+      '<button class="x" data-act="item-del" data-id="'+esc(it.id)+'" aria-label="削除">×</button></div>').join("")+'</div>';
+  }
+  h += '</div>';
+
+  /* 100日チャレンジ */
+  h += challengeCard();
+
+  /* 累計 */
+  h += '<div class="card total"><div class="s">これまでに整えたもの</div>'+
+       '<div class="n">'+items.length+'<small>個</small></div></div>';
+
+  /* 折りたたみ */
+  const parts = Array.isArray(r.parts) ? r.parts : [];
+  const partList = PARTS.concat(parts.filter(p => PARTS.indexOf(p) < 0));
+  const seg = (k, nm) => '<div class="seg"><span class="nm">'+nm+'</span>'+
+      [1,2,3].map(v => '<button data-act="cond" data-k="'+k+'" data-v="'+v+'" class="'+(r[k]===v?"on":"")+'">'+COND_LABEL[v]+'</button>').join("")+'</div>';
+  h += '<div class="card" style="padding:4px 16px"><details id="fold"'+(foldOpen?" open":"")+'><summary>体調・部位・メモ（書きたい日だけ）</summary>'+
+       '<div class="lab">体の重さ</div>'+
+       '<div style="display:grid;gap:6px">'+seg("m","朝")+seg("a","昼")+seg("n","夜")+'</div>'+
+       '<div class="lab">気になる部位</div><div class="field">'+
+       partList.map(p => '<button class="chip'+(parts.indexOf(p)>=0?" on":"")+'" data-act="part" data-v="'+esc(p)+'">'+esc(p)+'</button>').join("")+'</div>'+
+       '<div class="lab">メモ</div><textarea id="memo" placeholder="自由に">'+esc(r.memo||"")+'</textarea>'+
+       '<div style="height:12px"></div></details></div>';
+  return h;
+}
+
+function listHTML(){
+  const all = allItems().reverse();
+  const key = q.trim().toLowerCase();
+  const rows = key ? all.filter(i => i.t.toLowerCase().indexOf(key) >= 0) : all;
+  if (!rows.length) return '<p class="hint">'+(key ? "見つかりませんでした" : "まだありません。ホームの「整えた」から追加できます。")+'</p>';
+  const byMonth = {};
+  rows.forEach(i => { (byMonth[i.date.slice(0,7)] = byMonth[i.date.slice(0,7)] || []).push(i); });
+  return Object.keys(byMonth).sort().reverse().map(mk => {
+    const arr = byMonth[mk];
+    return '<div class="mh"><b>'+parseInt(mk.slice(5),10)+'月　<span style="font-weight:400;color:var(--muted)">'+arr.length+'個</span></b>'+
+      '<button class="small" data-act="copy-month" data-mk="'+mk+'">コピー</button></div>'+
+      arr.map(i => '<div class="lrow"><span class="d">'+parseInt(i.date.slice(5,7),10)+'/'+parseInt(i.date.slice(8),10)+'</span>'+
+        '<span class="tx">'+(i.t ? esc(i.t) : '<span class="hint">（名前なし）</span>')+'</span>'+
+        '<button class="x" data-act="list-del" data-date="'+i.date+'" data-id="'+esc(i.id)+'" aria-label="削除">×</button></div>').join("");
+  }).join("");
+}
+function listView(){
+  return '<h1>整えた一覧</h1><p class="hint" style="margin-top:-4px">インスタのネタ帳に。月ごとに「コピー」できます。</p>'+
+    '<input type="search" id="q" placeholder="さがす" value="'+esc(q)+'" style="margin:8px 0 4px">'+
+    '<div id="listBox">'+listHTML()+'</div>';
+}
+
+function forestView(){
+  const thisMonth = todayKey().slice(0,7), byMonth = {};
+  dateKeys().forEach(k => { if (db[k].asa){ const m = k.slice(0,7); byMonth[m] = (byMonth[m]||0) + 1; } });
+  const months = Object.keys(byMonth).filter(m => m < thisMonth).sort();
+  const items = allItems();
+  const itemsBy = {}; items.forEach(i => { const m = i.date.slice(0,7); itemsBy[m] = (itemsBy[m]||0) + 1; });
+  const totalAsa = Object.keys(byMonth).reduce((a,m) => a + byMonth[m], 0);
+  let h = '<h1>森</h1><div class="card total"><div class="s">これまでの朝活</div><div class="n">'+totalAsa+'<small>日</small></div>'+
+          '<div class="s">整えたもの '+items.length+' 個</div></div>';
+  if (!months.length){
+    h += '<p class="hint">月が終わると、その月のオリーブがここに並んで、少しずつ森になります。</p>';
+  } else {
+    h += '<div class="grid">'+months.map(m => {
+      const y = +m.slice(0,4), mo = +m.slice(5);
+      return '<div class="cell">'+treeSVG(byMonth[m], y*12+mo)+'<div class="l">'+y+'年'+mo+'月 <small>朝活'+byMonth[m]+'日'+(itemsBy[m]?' · 🌼'+itemsBy[m]:'')+'</small></div></div>';
+    }).join("")+'</div>';
+  }
+  return h;
+}
+
+function dataView(){
+  return '<h1>データ</h1>'+
+    (!canSave ? '<div class="warn">'+esc(loadErr)+'</div>' : '')+
+    '<div class="card"><h2>書き出す（バックアップ）</h2><p class="hint" style="margin:0 0 8px">記録 '+dateKeys().length+' 日分。コピーして、メモなどに保存しておくと安心です。</p>'+
+    '<textarea id="exp" readonly style="min-height:90px">'+esc(JSON.stringify(db))+'</textarea>'+
+    '<div class="row2"><button class="small pri" data-act="copy-all">全部コピー</button></div></div>'+
+    '<div class="card"><h2>断捨離チャレンジの設定</h2><div class="times"><div><div class="lab" style="margin-top:0">1日目</div>'+
+    '<input type="date" id="chStart" value="'+esc(settings.chStart)+'"></div>'+
+    '<div><div class="lab" style="margin-top:0">目標の日数</div><input type="number" id="chGoal" inputmode="numeric" min="1" max="1000" value="'+settings.chGoal+'"></div></div>'+
+    '<p class="hint" style="margin:8px 0 0">お休みの日も含めて、1日目からの経過日数で数えます。</p></div>'+
+    '<div class="card"><h2>読み込む</h2><p class="hint" style="margin:0 0 8px">書き出したデータを貼ると、<b>まだ記録のない日だけ</b>追加します。今ある記録は上書きしません。</p>'+
+    '<textarea id="imp" placeholder="ここにJSONを貼る"></textarea>'+
+    '<div class="row2"><button class="small pri" data-act="import">追加する</button></div></div>'+
+    '<p class="hint">更新前の記録は、この端末の中に自動でバックアップされています。</p>';
+}
+
+/* ===== 睡眠の見える化 ===== */
+const med = a => { const s = a.slice().sort((x,y) => x-y), n = s.length; return n ? (n % 2 ? s[(n-1)/2] : (s[n/2-1]+s[n/2])/2) : null; };
+function fmtClock(m){ m = ((Math.round(m) % 1440) + 1440) % 1440; return Math.floor(m/60) + ":" + pad(m % 60); }
+/* 就寝時刻を「0:00からの分」に。12時以降は前の晩(マイナス)。例 23:00→-60、00:30→30 */
+function bedRel(r){ const b = r ? toMin(r.bed) : null; return b === null ? null : (b >= 720 ? b - 1440 : b); }
+function lastDays(n){
+  const out = [], base = new Date();
+  for (let i = n-1; i >= 0; i--){
+    const d = new Date(base.getFullYear(), base.getMonth(), base.getDate() - i), k = ymd(d), r = db[k];
+    out.push({date:k, d:d, bed:bedRel(r), dur:sleepMinutes(r), wake:r ? toMin(r.wake) : null});
+  }
+  return out;
+}
+/* 6時間確保できる就寝の目安 = 最近の起床(中央値) − 6時間 */
+function goalInfo(){
+  const w = lastDays(14).map(x => x.wake).filter(x => x !== null);
+  if (w.length < 3) return null;
+  const mw = med(w);
+  return {goal: Math.round((mw - SLEEP_GOAL*60) / 5) * 5, wake: mw};
+}
+function weekStats(list){
+  const beds = list.map(x => x.bed).filter(x => x !== null), durs = list.map(x => x.dur).filter(x => x !== null);
+  return {bed: med(beds), avg: durs.length ? durs.reduce((a,b) => a+b,0)/durs.length/60 : null,
+          ok: durs.filter(x => x >= SLEEP_GOAL*60).length, n: durs.length};
+}
+const CH_W = 340, CH_H = 172, CH_L = 38, CH_R = 8, CH_T = 10, CH_B = 24;
+function chAxisX(days){
+  let s = "";
+  days.forEach((x,i) => { if (i % 7 === 0){
+    const cx = CH_L + i*(CH_W-CH_L-CH_R)/(days.length-1);
+    s += '<text x="'+cx.toFixed(1)+'" y="'+(CH_H-8)+'" font-size="9" fill="#8a8670" text-anchor="middle">'+(x.d.getMonth()+1)+'/'+x.d.getDate()+'</text>';
+  }});
+  return s;
+}
+function chartBed(days, goal){
+  const vals = days.map(x => x.bed).filter(x => x !== null);
+  let lo = Math.min(-60, ...vals, goal === null ? 0 : goal - 30), hi = Math.max(120, ...vals, goal === null ? 0 : goal + 60);
+  lo = Math.max(-300, Math.floor(lo/60)*60); hi = Math.min(300, Math.ceil(hi/60)*60);
+  const Y = v => CH_T + (v-lo)/(hi-lo)*(CH_H-CH_T-CH_B);
+  const X = i => CH_L + i*(CH_W-CH_L-CH_R)/(days.length-1);
+  let s = '<svg viewBox="0 0 '+CH_W+' '+CH_H+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="就寝時刻の推移" style="width:100%;display:block">';
+  for (let v = lo; v <= hi; v += 60)
+    s += '<line x1="'+CH_L+'" x2="'+(CH_W-CH_R)+'" y1="'+Y(v).toFixed(1)+'" y2="'+Y(v).toFixed(1)+'" stroke="#ece4cc"/>'+
+         '<text x="'+(CH_L-5)+'" y="'+(Y(v)+3).toFixed(1)+'" font-size="9" fill="#8a8670" text-anchor="end">'+fmtClock(v)+'</text>';
+  if (goal !== null)
+    s += '<line x1="'+CH_L+'" x2="'+(CH_W-CH_R)+'" y1="'+Y(goal).toFixed(1)+'" y2="'+Y(goal).toFixed(1)+'" stroke="#6f8f72" stroke-width="1.5" stroke-dasharray="4 3"/>'+
+         '<text x="'+(CH_W-CH_R)+'" y="'+(Y(goal)-4).toFixed(1)+'" font-size="9" fill="#4d6b50" text-anchor="end">目安 '+fmtClock(goal)+'</text>';
+  let path = "", prev = false;
+  days.forEach((x,i) => { if (x.bed === null){ prev = false; return; } path += (prev ? "L" : "M") + X(i).toFixed(1) + " " + Y(x.bed).toFixed(1) + " "; prev = true; });
+  if (path) s += '<path d="'+path+'" fill="none" stroke="#c9d6c2" stroke-width="1.5"/>';
+  days.forEach((x,i) => { if (x.bed === null) return;
+    s += '<circle cx="'+X(i).toFixed(1)+'" cy="'+Y(x.bed).toFixed(1)+'" r="3.2" fill="'+((goal !== null && x.bed > goal) ? "#e3b94f" : "#6f8f72")+'"/>'; });
+  return s + chAxisX(days) + '</svg>';
+}
+function chartDur(days){
+  const vals = days.map(x => x.dur).filter(x => x !== null);
+  const hi = Math.max(540, Math.ceil(Math.max(0, ...vals)/180)*180);
+  const Y = v => CH_H-CH_B - v/hi*(CH_H-CH_T-CH_B);
+  const bw = Math.max(3, (CH_W-CH_L-CH_R)/days.length*0.62);
+  let s = '<svg viewBox="0 0 '+CH_W+' '+CH_H+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="睡眠時間の推移" style="width:100%;display:block">';
+  for (let v = 0; v <= hi; v += 180)
+    s += '<line x1="'+CH_L+'" x2="'+(CH_W-CH_R)+'" y1="'+Y(v).toFixed(1)+'" y2="'+Y(v).toFixed(1)+'" stroke="#ece4cc"/>'+
+         '<text x="'+(CH_L-5)+'" y="'+(Y(v)+3).toFixed(1)+'" font-size="9" fill="#8a8670" text-anchor="end">'+(v/60)+'h</text>';
+  days.forEach((x,i) => { if (x.dur === null) return;
+    const cx = CH_L + i*(CH_W-CH_L-CH_R)/(days.length-1);
+    s += '<rect x="'+(cx-bw/2).toFixed(1)+'" y="'+Y(x.dur).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+(Y(0)-Y(x.dur)).toFixed(1)+
+         '" rx="1.5" fill="'+(x.dur >= SLEEP_GOAL*60 ? "#6f8f72" : "#dccfae")+'"/>'; });
+  s += '<line x1="'+CH_L+'" x2="'+(CH_W-CH_R)+'" y1="'+Y(SLEEP_GOAL*60).toFixed(1)+'" y2="'+Y(SLEEP_GOAL*60).toFixed(1)+'" stroke="#4d6b50" stroke-width="1.5" stroke-dasharray="4 3"/>'+
+       '<text x="'+(CH_W-CH_R)+'" y="'+(Y(SLEEP_GOAL*60)-4).toFixed(1)+'" font-size="9" fill="#4d6b50" text-anchor="end">目標 '+SLEEP_GOAL+'時間</text>';
+  return s + chAxisX(days) + '</svg>';
+}
+function lateNightText(){
+  const cnt = [0,0,0,0,0,0,0]; let total = 0;
+  dateKeys().forEach(k => {
+    const b = bedRel(db[k]); if (b === null || b < 60) return;
+    const d = parseYmd(k); d.setDate(d.getDate() - 1);   /* 寝た「夜」は起きた日の前日 */
+    cnt[d.getDay()]++; total++;
+  });
+  if (total < 3) return "";
+  const top = cnt.indexOf(Math.max.apply(null, cnt));
+  return '1時以降に寝た夜は、記録の中で <b>'+total+'回</b>。いちばん多いのは <b>'+WD[top]+'曜の夜</b>（'+cnt[top]+'回）です。';
+}
+function sleepView(){
+  const days = lastDays(30), g = goalInfo();
+  const A = weekStats(days.slice(23)), B = weekStats(days.slice(16, 23));
+  const cell = (st) => '<div><div class="sv-k">就寝（中央値）</div><div class="sv-v">'+(st.bed === null ? "—" : fmtClock(st.bed))+'</div>'+
+    '<div class="sv-k">睡眠（平均）</div><div class="sv-v">'+(st.avg === null ? "—" : st.avg.toFixed(1)+'<small>時間</small>')+'</div>'+
+    '<div class="sv-k">'+SLEEP_GOAL+'時間以上</div><div class="sv-v">'+st.ok+'<small>日 / 記録'+st.n+'日</small></div></div>';
+  let change = "";
+  if (A.bed !== null && B.bed !== null){
+    const diff = Math.round(A.bed - B.bed);
+    change = Math.abs(diff) < 10 ? "就寝時刻は、その前の週とほぼ同じです。" :
+             diff < 0 ? "その前の週より、<b>"+(-diff)+"分 早く</b>寝られています。" : "その前の週より、"+diff+"分 遅めでした。";
+  }
+  if (!change && A.n === 0 && A.bed === null) change = "この1週間の記録がまだありません。入れると、ここに先週との比較が出ます。";
+  const late = lateNightText();
+  let h = '<h1>睡眠</h1>';
+  if (days.every(x => x.bed === null && x.dur === null)) return h + '<p class="hint">ホームの「睡眠」に就寝と起床を入れると、ここにグラフが出ます。</p>';
+  h += '<div class="card"><h2>直近7日と、その前の7日</h2><div class="sv-grid"><div class="sv-h">直近7日</div><div class="sv-h">その前の7日</div>'+
+       cell(A)+cell(B)+'</div>'+(change ? '<div class="sv-note">'+change+'</div>' : '')+'</div>';
+  h += '<div class="card"><h2>就寝時刻（上ほど早い）</h2>'+chartBed(days, g ? g.goal : null)+
+       '<div class="hint" style="margin-top:6px">'+(g ? '点線は、6時間眠るための就寝の目安（最近の起床 '+fmtClock(g.wake)+' から逆算）。目安より早い日は緑、遅い日は黄色です。' : '起床も何日か入れると、6時間眠るための就寝の目安が出ます。')+'</div></div>';
+  h += '<div class="card"><h2>睡眠時間</h2>'+chartDur(days)+'<div class="hint" style="margin-top:6px">緑は'+SLEEP_GOAL+'時間以上の日です。</div></div>';
+  if (late) h += '<div class="card"><h2>夜更かしの傾向</h2><div style="font-size:14px">'+late+'</div></div>';
+  return h;
+}
+
+const TABS = [["home","🌿","ホーム"],["list","🌼","整えた"],["forest","🌳","森"],["sleep","🌙","睡眠"],["data","💾","データ"]];
 function render(){
-  renderGrow();
-  const keys=Object.keys(data).sort().reverse();
-  const box=document.getElementById("bands");
-  document.getElementById("empty").hidden=keys.length>0;
-  box.innerHTML="";
-  keys.slice(0,21).forEach(k=>{
-    const e=data[k],h=sleepOf(k),b=document.createElement("button");
-    b.className="band";b.type="button";b.onclick=()=>loadDay(k);
-    const mins=(e.noon?15:0)+(e.night?15:0)+(e.morning?60:0);
-    const sw=((h||0)/22)*100, ww=(mins/60/22)*100*3;
-    const dots=["m","a","n"].map(x=>'<i style="opacity:'+[.22,.45,.72,1][e[x]!==undefined?e[x]:1]+'"></i>').join("");
-    b.innerHTML='<span class="d">'+k.slice(5).replace("-","/")+'</span>'+
-      '<span class="h">'+(h!==null?h.toFixed(1):"–")+'</span>'+
-      '<span class="bar"><i class="s" style="width:'+sw+'%"></i><i class="w" style="width:'+ww+'%"></i></span>'+
-      '<span class="dots">'+dots+'</span>';
-    box.appendChild(b);
-  });
-
-  /* --- 今週の作業時間 --- */
-  const tk=todayKey(), dow=new Date(tk.split("-")[0],tk.split("-")[1]-1,tk.split("-")[2]).getDay();
-  const monOff=(dow+6)%7;
-  const wkStart=shiftKey(tk,-monOff);
-  let mins=0, hrs=0;
-  for(let i=0;i<7;i++){
-    const e=data[shiftKey(wkStart,i)];if(!e)continue;
-    if(e.noon)mins+=15;
-    if(e.night)mins+=15;
-    if(e.morning)hrs+=1;
-  }
-  document.getElementById("wkMin").textContent=mins;
-  document.getElementById("wkHr").textContent=hrs;
-  const wm=document.getElementById("wkMsg");
-  if(mins===0&&hrs===0)
-    wm.innerHTML='まだ今週の記録がありません。<b>夜22時の15分</b>から始めてみてください。';
-  else
-    wm.innerHTML='今週これまでで <b>'+(mins+hrs*60)+'分</b>。'+
-      '全部できなくて大丈夫です。できた日を数えるための表示です。';
-
-  /* --- 体のようす（重い日に出やすい部位） --- */
-  const rated=keys.filter(k=>data[k].m!==undefined&&(data[k].parts||[]).length);
-  const ins=document.getElementById("insight");
-  if(rated.length>=3){
-    ins.hidden=false;
-    const heavy=keys.filter(k=>dayScore(data[k])>=1.7);
-    const light=keys.filter(k=>data[k].m!==undefined&&dayScore(data[k])<1.7);
-    document.getElementById("lead").innerHTML=
-      '記録した中で、体が重かった日は <b>'+heavy.length+'日</b>、'+
-      '軽かった日は <b>'+light.length+'日</b> でした。';
-    const cnt={};
-    heavy.forEach(k=>(data[k].parts||[]).forEach(p=>cnt[p]=(cnt[p]||0)+1));
-    const rank=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,5);
-    const ps=document.getElementById("partStats");
-    if(rank.length&&heavy.length){
-      ps.hidden=false;
-      document.getElementById("partRows").innerHTML=rank.map(([p,n])=>
-        '<div class="prow"><span>'+p+'</span><span class="pb"><i style="width:'+
-        (n/heavy.length*100)+'%"></i></span><span class="pn">'+n+'/'+heavy.length+'</span></div>').join("");
-    }else{ps.hidden=true}
-  }else{ins.hidden=true}
+  const app = document.getElementById("app");
+  app.innerHTML = tab === "home" ? homeView() : tab === "list" ? listView() : tab === "forest" ? forestView() : tab === "sleep" ? sleepView() : dataView();
+  document.getElementById("tabs").innerHTML = TABS.map(t =>
+    '<button data-tab="'+t[0]+'" class="'+(tab===t[0]?"on":"")+'"><span class="e">'+t[1]+'</span>'+t[2]+'</button>').join("");
+  if (tab === "home" && itemOpen){ const el = document.getElementById("itemText"); if (el) el.focus(); }
 }
 
-document.getElementById("bkOut").onclick=()=>{
-  document.getElementById("bkBox").value=JSON.stringify(data);
-  document.getElementById("bkBox").select();
-};
-document.getElementById("bkIn").onclick=()=>{
-  const v=document.getElementById("bkBox").value.trim();
-  if(!v)return;
-  try{
-    const d=JSON.parse(v);
-    if(typeof d!=="object"||Array.isArray(d))throw 0;
-    data=Object.assign({},data,d);
-    store.save(data);
-    loadDay(todayKey());render();
-    const t=document.getElementById("toast");
-    t.textContent="読み込みました";t.classList.add("on");
-    setTimeout(()=>t.classList.remove("on"),1700);
-  }catch(e){alert("読み込めませんでした。書き出した文字列をそのまま貼ってください。")}
-};
+/* ===== 小道具 ===== */
+let toastTimer = null;
+function toast(msg){
+  const t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 1800);
+}
+function copyText(text, okMsg){
+  const done = () => toast(okMsg || "コピーしました");
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done, () => fallbackCopy(text, done));
+  } else fallbackCopy(text, done);
+}
+function fallbackCopy(text, done){
+  const ta = document.createElement("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  try { document.execCommand("copy"); done(); } catch(e){ toast("コピーできませんでした。手動で選んでコピーしてください"); }
+  document.body.removeChild(ta);
+}
+function newId(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function shiftDay(n){ const d = parseYmd(cur); d.setDate(d.getDate()+n); const k = ymd(d); if (k <= todayKey()) cur = k; }
 
-showMode();data=store.load();loadDay(todayKey());render();
+/* ===== 操作 ===== */
+document.addEventListener("click", e => {
+  const tb = e.target.closest("[data-tab]");
+  if (tb){ tab = tb.dataset.tab; render(); window.scrollTo(0,0); return; }
+  const el = e.target.closest("[data-act]"); if (!el) return;
+  const act = el.dataset.act;
+  switch (act){
+    case "prev": shiftDay(-1); asaOpen = false; render(); break;
+    case "next": shiftDay(1); asaOpen = false; render(); break;
+    case "asa-open": asaOpen = true; render(); break;
+    case "asa-close": asaOpen = false; render(); break;
+    case "asa-pick": {
+      const noteEl = document.getElementById("asaNote");
+      const note = noteEl ? noteEl.value.trim() : "";
+      if (edit(cur, r => { r.asa = {what: el.dataset.v, note: note, at: Date.now()}; })){ asaOpen = false; render(); toast("🌿 木が育ちました"); }
+      break;
+    }
+    case "asa-undo":
+      if (confirm("この日の朝活の記録を取り消しますか？")){ edit(cur, r => { delete r.asa; }); render(); }
+      break;
+    case "item-open": itemOpen = true; render(); break;
+    case "item-close": itemOpen = false; render(); break;
+    case "item-add": addItem(); break;
+    case "item-del":
+      if (confirm("この記録を削除しますか？")){ edit(cur, r => { r.items = (r.items||[]).filter(i => i.id !== el.dataset.id); if (!r.items.length) delete r.items; }); render(); }
+      break;
+    case "list-del":
+      if (confirm("この記録を削除しますか？")){
+        const dt = el.dataset.date;
+        edit(dt, r => { r.items = (r.items||[]).filter(i => i.id !== el.dataset.id); if (!r.items.length) delete r.items; });
+        render();
+      }
+      break;
+    case "cond": {
+      const k = el.dataset.k, v = +el.dataset.v;
+      edit(cur, r => { if (r[k] === v) delete r[k]; else r[k] = v; });
+      render(); break;
+    }
+    case "part": {
+      const v = el.dataset.v;
+      edit(cur, r => {
+        const a = Array.isArray(r.parts) ? r.parts.slice() : [];
+        const i = a.indexOf(v); if (i >= 0) a.splice(i,1); else a.push(v);
+        r.parts = a;
+      });
+      render(); break;
+    }
+    case "copy-month": {
+      const mk = el.dataset.mk;
+      const lines = allItems().filter(i => i.date.startsWith(mk) && i.t).map(i => "・" + i.t);
+      copyText(lines.length ? lines.join("\n") : "", lines.length ? lines.length + "件コピーしました" : "コピーする名前がありません");
+      break;
+    }
+    case "copy-all": copyText(JSON.stringify(db)); break;
+    case "import": importData(); break;
+  }
+});
+
+function addItem(){
+  const el = document.getElementById("itemText");
+  const t = el ? el.value.trim() : "";
+  const id = newId();
+  if (edit(cur, r => { (r.items = Array.isArray(r.items) ? r.items : []).push({id: id, t: t, at: Date.now()}); })){
+    popId = id; render(); toast("🌼 ひとつ整えました");
+  }
+}
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter" && e.target && e.target.id === "itemText"){ e.preventDefault(); addItem(); }
+});
+document.addEventListener("input", e => {
+  if (e.target && e.target.id === "q"){ q = e.target.value; document.getElementById("listBox").innerHTML = listHTML(); }
+});
+document.addEventListener("change", e => {
+  const id = e.target && e.target.id;
+  if (id === "asaNoteEdit"){
+    edit(cur, r => { if (r.asa) r.asa.note = e.target.value.trim(); });
+  } else if (id === "wake" || id === "bed"){
+    edit(cur, r => { r[id] = e.target.value || ""; });
+    const si = document.getElementById("sleepInfo"); if (si) si.innerHTML = sleepInfoHTML(db[cur]);
+  } else if (id === "memo"){
+    edit(cur, r => { r.memo = e.target.value; });
+  } else if (id === "chStart"){
+    if (DATE_RE.test(e.target.value)){ settings.chStart = e.target.value; saveSettings(); toast("開始日を変えました"); }
+    else e.target.value = settings.chStart;
+  } else if (id === "chGoal"){
+    const v = Math.floor(+e.target.value);
+    if (v >= 1 && v <= 1000){ settings.chGoal = v; saveSettings(); toast("目標日数を変えました"); }
+    else e.target.value = settings.chGoal;
+  }
+});
+document.addEventListener("toggle", e => { if (e.target && e.target.id === "fold") foldOpen = e.target.open; }, true);
+
+function importData(){
+  const el = document.getElementById("imp"); const text = el ? el.value.trim() : "";
+  if (!text){ toast("JSONを貼ってください"); return; }
+  let o;
+  try { o = JSON.parse(text); if (!o || typeof o !== "object" || Array.isArray(o)) throw 0; }
+  catch(e){ toast("JSONを読み取れませんでした"); return; }
+  if (!canSave){ toast(loadErr); return; }
+  let added = 0;
+  Object.keys(o).forEach(k => { if (DATE_RE.test(k) && o[k] && typeof o[k] === "object" && !db[k]){ db[k] = o[k]; added++; } });
+  if (added){ save(); toast(added + "日分を追加しました"); } else toast("追加する日はありませんでした");
+  render();
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible"){
+    const t = todayKey();
+    if (t !== lastToday){ if (cur === lastToday) cur = t; lastToday = t; }
+    const ae = document.activeElement;
+    if (!ae || ae === document.body) render();
+  }
+});
+
+render();
 </script>
 </body>
 </html>
